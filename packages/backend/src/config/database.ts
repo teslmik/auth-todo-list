@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 
-import { createConnection, DataSourceOptions } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { Todo } from '../entities/todo.entity';
+import { User } from '../entities/User';
 
 function getSSLConfig(env: string) {
   const configs: { [key: string]: boolean | { [key: string]: boolean } } = {
@@ -14,23 +16,26 @@ function getSSLConfig(env: string) {
   return configs[env];
 }
 
+const options: DataSourceOptions = {
+  host: process.env.POSTGRES_HOST,
+  port: Number(process.env.POSTGRES_PORT),
+  logging: ['query', 'error'],
+  type: 'postgres',
+  entities: [Todo, User],
+  migrations: ['dist/migrations/**/*.{ts,js}'],
+  subscribers: ['src/subscriber/**/*.ts'],
+  database: process.env.POSTGRES_DB,
+  username: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
+  ssl: getSSLConfig(process.env.SERVER_MODE as string),
+  synchronize: true
+};
+
+export const myDataSource = new DataSource(options);
+
 const connectDB = async () => {
   try {
-    const options: DataSourceOptions = {
-      host: process.env.POSTGRES_HOST,
-      port: Number(process.env.POSTGRES_PORT),
-      logging: ['query', 'error'],
-      type: 'postgres',
-      entities: ['dist/**/*.entity.{ts,js}'],
-      migrations: ['dist/migrations/**/*.{ts,js}'],
-      subscribers: ['src/subscriber/**/*.ts'],
-      database: process.env.POSTGRES_DB,
-      username: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      ssl: getSSLConfig(process.env.SERVER_MODE as string),
-      synchronize: true
-    };
-    await createConnection(options);
+    await myDataSource.initialize();
     console.log('DB Connected...');
   } catch (err: any) {
     console.error(err.message);
