@@ -29,6 +29,16 @@ export class TodoController {
       throw new Error(error);
     }
   }
+
+  async delete(req: Request, res: Response) {
+    try {
+      const deletedTodo = await this.todoService.deleteTodo(req.params.id);
+      res.send(deletedTodo);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+      throw new Error(error);
+    }
+  }
 }
 
 const todoController = new TodoController(new TodoService());

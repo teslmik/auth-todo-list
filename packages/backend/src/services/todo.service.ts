@@ -1,6 +1,5 @@
 import { Repository } from 'typeorm';
 
-import { ITodoRequestDto } from '../types/types';
 import { myDataSource } from '../config/database';
 import { Todo } from '../entities/todo.entity';
 
@@ -21,17 +20,20 @@ export default class TodoService {
     return todo;
   }
 
-  async createTodo(payload: ITodoRequestDto): Promise<Todo> {
+  async createTodo(payload: Todo): Promise<Todo> {
     const newTodo: Todo = await this.todoRepository.save(payload);
     return newTodo;
   }
 
-  async updateTodo(id: string, payload: ITodoRequestDto) {
+  async updateTodo(id: string, payload: Todo) {
     await this.todoRepository.update(id, payload);
     const updatedTodo = await this.findOneById(id);
     return updatedTodo;
   }
 
-  // async deleteTodo() {
-  // }
+  async deleteTodo(id: string) {
+    const deletedTodo = await this.findOneById(id);
+    await this.todoRepository.delete(id);
+    return deletedTodo;
+  }
 }

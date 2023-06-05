@@ -4,5 +4,5 @@ export interface ITodo {
   id: string;
   title: string;
   description: string;
-  complited: string;
+  complited: boolean;
 }
