@@ -10,10 +10,20 @@ export class TodoController {
     res.send(todos);
   }
 
-  async createNewTodo(req: Request, res: Response) {
+  async create(req: Request, res: Response) {
     try {
       const newTodo = await this.todoService.createTodo(req.body);
       res.send(newTodo);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+      throw new Error(error);
+    }
+  }
+
+  async update(req: Request, res: Response) {
+    try {
+      const updatedTodo = await this.todoService.updateTodo(req.params.id, req.body);
+      res.send(updatedTodo);
     } catch (error: any) {
       res.status(400).json({ message: error.message });
       throw new Error(error);

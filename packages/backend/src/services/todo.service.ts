@@ -16,15 +16,21 @@ export default class TodoService {
     return todos;
   }
 
+  async findOneById(id: string) {
+    const todo = await this.todoRepository.findOneBy({ id });
+    return todo;
+  }
+
   async createTodo(payload: ITodoRequestDto): Promise<Todo> {
     const newTodo: Todo = await this.todoRepository.save(payload);
     return newTodo;
   }
 
-  // async updateTodo(payload: ITodoRequestDto) {
-  //   const updatedTodo: Todo = await this.todoRepository.save(payload);
-  //   return updatedTodo;
-  // }
+  async updateTodo(id: string, payload: ITodoRequestDto) {
+    await this.todoRepository.update(id, payload);
+    const updatedTodo = await this.findOneById(id);
+    return updatedTodo;
+  }
 
   // async deleteTodo() {
   // }
