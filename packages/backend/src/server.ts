@@ -7,11 +7,11 @@ import connectDB from './config/database';
 
 const app = express();
 const router = new AppRouter(app);
-// Connect to MongoDB
+// Connect to DB
 connectDB();
 
 // Express configuration
-app.set('port', process.env.PORT || 4200);
+app.set('port', process.env.PORT || 3001);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
