@@ -4,9 +4,8 @@ import { appDataSource } from '../config/app-data-source';
 import { Todo } from '../entities/entities';
 
 const isExists = async (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params;
-
   try {
+    const { id } = req.params;
     const todoRepository = appDataSource.getRepository(Todo);
 
     const todo = await todoRepository.findOneBy({ id });
