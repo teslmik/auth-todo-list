@@ -1,5 +1,4 @@
-export interface ITodo {
-  id: string;
+export interface IUpdateTodoRequestDto {
   title: string;
   description: string;
   complited: boolean;
