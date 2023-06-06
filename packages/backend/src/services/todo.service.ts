@@ -1,13 +1,13 @@
 import { Repository } from 'typeorm';
 
-import { myDataSource } from '../config/database';
-import { Todo } from '../entities/todo.entity';
+import { appDataSource } from '../config/app-data-source';
+import { Todo } from '../entities/entities';
 
 export default class TodoService {
   private readonly todoRepository: Repository<Todo>;
 
   constructor() {
-    this.todoRepository = myDataSource.getRepository(Todo);
+    this.todoRepository = appDataSource.getRepository(Todo);
   }
 
   async findAll() {
@@ -17,6 +17,7 @@ export default class TodoService {
 
   async findOneById(id: string) {
     const todo = await this.todoRepository.findOneBy({ id });
+
     return todo;
   }
 

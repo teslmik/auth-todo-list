@@ -1,9 +1,8 @@
-import { BaseEntity, Column, Entity, Generated, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Todo extends BaseEntity {
-  @PrimaryColumn()
-  @Generated('uuid')
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
@@ -13,5 +12,5 @@ export class Todo extends BaseEntity {
   description: string;
 
   @Column({ default: false })
-  complited: string;
+  complited: boolean;
 }
