@@ -16,18 +16,16 @@ export const QUERY_KEYS = {
 
 // Backend Routes
 export const BACKEND_KEYS = {
-  EXAMPLE: 'example',
-  COURSES: 'courses',
-  ARTICLES: 'articles',
-  STATISTIC: 'statistic',
-  TRENDING: 'trending',
-  FEATURED_ARTICLES: 'featured_articles'
+  API_VERSION: 'api',
+  TODOS: 'todos',
+  USER: 'user'
 };
 
 export const ROUTER_KEYS = {
   NULL: '',
   ROOT: '/',
   HOME: 'home',
+  TODOS: 'todos',
   AUTHORIZED: 'authorized',
   NOT_FOUND: '*'
 };

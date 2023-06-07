@@ -1,25 +1,26 @@
-/* eslint-disable no-confusing-arrow */
 import React from 'react';
 import { Box, Paper, Table, TableContainer, TablePagination } from '@mui/material';
 import { ITodo } from '../../types';
-import { Order } from '../../enums';
 import { TableHeader } from './table-header.component';
 import { TodoTableRows } from './todo-table-rows.component';
+import { EditModal } from '../edit-modal';
+import { useGetAllTodos, useGlobalContext } from '../../hooks';
+import { Loader } from '../loader';
 
 export const TodoTable: React.FC = () => {
-  const [todos, setTodos] = React.useState<ITodo[]>([]);
-  const [order, setOrder] = React.useState<Order>(Order.ASC);
-  const [orderBy, setOrderBy] = React.useState<keyof Omit<ITodo, 'complited'>>('title');
+  const { data: todos, isSuccess, isLoading } = useGetAllTodos();
+  const { isOpen, setIsOpen } = useGlobalContext();
+
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [currentTodo, setCurrentTodo] = React.useState<ITodo | null>(null);
 
-  const handleRequestSort = (
-    _: React.MouseEvent<unknown>,
-    property: keyof Omit<ITodo, 'complited'>
-  ) => {
-    const isAsc = orderBy === property && order === Order.ASC;
-    setOrder(isAsc ? Order.DESC : Order.ASC);
-    setOrderBy(property);
+  const handleOpen = (id: string) => {
+    const findTodo = todos?.filter((todo) => todo.id === id)[0];
+    if (findTodo) {
+      setCurrentTodo(findTodo);
+    }
+    setIsOpen({ open: true, edit: true });
   };
 
   const handleChangePage = (_: unknown, newPage: number) => {
@@ -31,53 +32,32 @@ export const TodoTable: React.FC = () => {
     setPage(0);
   };
 
-  React.useEffect(() => {
-    const getTodos = async () => {
-      try {
-        const response = await fetch('http://localhost:5003/api/todos');
-        if (!response.ok) {
-          throw new Error('Failed to fetch todos');
-        }
-        const todosData = await response.json();
-        setTodos(todosData);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
-      }
-    };
-
-    getTodos();
-  }, []);
-
-  if (todos.length === 0) {
-    return <div>Loading...</div>;
+  if (isLoading || !isSuccess) {
+    return <Loader />;
   }
 
   return (
-    <Box sx={{ width: '100%', pt: 3 }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
-            <TableHeader order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
-            <TodoTableRows
-              order={order}
-              orderBy={orderBy}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              rows={todos}
-            />
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={todos.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </Box>
+    <>
+      <Box sx={{ width: '100%', pt: 3 }}>
+        <Paper sx={{ width: '100%', mb: 2 }}>
+          <TableContainer>
+            <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
+              <TableHeader />
+              <TodoTableRows handleOpen={handleOpen} rows={todos} />
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={todos.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
+      </Box>
+      <EditModal isOpen={isOpen} setIsOpen={setIsOpen} todo={currentTodo} />
+    </>
   );
 };
