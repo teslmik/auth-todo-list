@@ -6,6 +6,7 @@ import todoController from '../../controllers/todo.controller';
 const todosRouter: Router = Router();
 
 todosRouter.get('', tryCatchMiddleware(todoController.getAllTodo.bind(todoController)));
+todosRouter.get('/:id', tryCatchMiddleware(todoController.getOneTodo.bind(todoController)));
 todosRouter.post(
   '',
   todoValidation.create,

@@ -13,4 +13,16 @@ export class Todo extends BaseEntity {
 
   @Column({ default: false })
   complited: boolean;
+
+  @Column({
+    type: 'timestamp',
+    default: () => 'NOW()'
+  })
+  createdAt: Date;
+
+  @Column({
+    type: 'timestamp',
+    default: () => 'NOW()'
+  })
+  updatedAt: Date;
 }
