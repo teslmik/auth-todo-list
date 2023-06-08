@@ -1,21 +1,58 @@
-import { Box, Typography } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { Box, Button, Switch, Typography } from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
 import React from 'react';
-import { useGetOneTodo } from '../common/hooks';
+import { useEditTodo, useGetOneTodo } from '../common/hooks';
 import { Loader } from '../common/components/loader';
 
 const TodoPageContainer: React.FC = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { data, isLoading, isSuccess } = useGetOneTodo(id as string);
+  const { mutate: editTodo, isLoading: updPending } = useEditTodo();
 
   if (isLoading || !isSuccess) {
     return <Loader />;
   }
 
   return (
-    <Box sx={{ width: '100%', mt: 1 }}>
-      <Typography variant="h3" sx={{ mb: 2 }}>{`TodoPage ${data.title}`}</Typography>
-      <Typography variant="h6" component="p">{`TodoPage ${data.description}`}</Typography>
+    <Box sx={{ height: '100%', mt: 1, display: 'flex', flexDirection: 'column' }}>
+      <Typography variant="h3" sx={{ mb: 2 }}>
+        {data.title}
+      </Typography>
+      <Typography variant="subtitle1" component="p">
+        Description:
+      </Typography>
+      <Typography variant="h6" component="p" sx={{ flex: '1 1 auto' }}>
+        {data.description}
+      </Typography>
+      <Box sx={{ width: 288, display: 'flex', justifyContent: 'space-between', mb: 4, mt: 4 }}>
+        <Typography variant="h6" component="p">
+          Complete:
+        </Typography>
+        <Switch
+          checked={data.complited}
+          disabled={updPending}
+          onChange={() =>
+            editTodo({
+              id: data.id,
+              title: data.title,
+              description: data.description,
+              complited: !data.complited
+              // eslint-disable-next-line prettier/prettier
+            })}
+        />
+      </Box>
+      <Box sx={{ width: 288, display: 'flex', justifyContent: 'space-between', mb: 4, mt: 4 }}>
+        <Typography variant="h6" component="p">
+          Private:
+        </Typography>
+        <Switch />
+      </Box>
+      <Box>
+        <Button variant="contained" sx={{ width: 288, mb: 5, mt: 4 }} onClick={() => navigate('/')}>
+          Back
+        </Button>
+      </Box>
     </Box>
   );
 };

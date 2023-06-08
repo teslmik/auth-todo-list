@@ -1,7 +1,7 @@
 import { TableBody, TableCell, TableRow } from '@mui/material';
 import React from 'react';
-import { ITodo } from '../../types';
-import { TableActionsCell } from './table-actions-cell.component';
+import { ITodo } from '../../../types';
+import { TableActionsCell } from '../table-actions.component';
 
 interface Props {
   handleOpen: (id: string) => void;
@@ -12,8 +12,8 @@ export const TodoTableRows: React.FC<Props> = ({ handleOpen, rows }) => (
   <TableBody>
     {rows.map((row) => (
       <TableRow hover key={row.title}>
-        <TableCell component="th">{row.title}</TableCell>
-        <TableCell>{row.description}</TableCell>
+        <TableCell>{row.title}</TableCell>
+        <TableCell sx={{ wordWrap: ' break-word' }}>{row.description}</TableCell>
         <TableCell align="right">
           <TableActionsCell row={row} handleOpen={handleOpen} />
         </TableCell>

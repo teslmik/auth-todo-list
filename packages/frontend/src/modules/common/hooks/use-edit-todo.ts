@@ -7,6 +7,9 @@ export const useEditTodo = () => {
 
   return useMutation({
     mutationFn: (payload: ITodo) => todoService.editTodo(payload),
-    onSuccess: () => client.invalidateQueries({ queryKey: ['todos'] })
+    onSuccess: (data) => {
+      client.invalidateQueries({ queryKey: ['todos'] });
+      client.invalidateQueries({ queryKey: ['todo', data.id] });
+    }
   });
 };

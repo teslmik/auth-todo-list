@@ -13,7 +13,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       keepPreviousData: true,
-      refetchOnMount: false,
+      refetchOnMount: 'always',
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,
       cacheTime: Infinity

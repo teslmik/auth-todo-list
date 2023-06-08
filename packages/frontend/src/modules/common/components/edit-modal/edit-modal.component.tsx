@@ -46,13 +46,14 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
       onClose={() => setIsOpen((prev) => ({ open: false, edit: prev.edit }))}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
+      sx={{ p: 4 }}
     >
       <Fade in={isOpen.open}>
         <Box sx={editModalStyled} component="form" onSubmit={handleSubmit}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             {isOpen.edit ? 'Edit Todo' : 'Create todo'}
           </Typography>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
             <TextField
               required
               id="outlined-required"

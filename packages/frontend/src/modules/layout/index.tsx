@@ -7,7 +7,7 @@ const MainLayout: React.FC = () => (
   <>
     <Header />
     <Divider variant="middle" />
-    <Container>
+    <Container sx={{ height: 'calc(100vh - 74px)' }}>
       <Outlet />
     </Container>
   </>
