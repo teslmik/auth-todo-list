@@ -9,6 +9,11 @@ export class TodoController {
     res.json(todos);
   }
 
+  async getOneTodo(req: Request, res: Response) {
+    const todos = await this.todoService.findOneById(req.params.id);
+    res.json(todos);
+  }
+
   async create(req: Request, res: Response, next: NextFunction) {
     const newTodo = await this.todoService.createTodo(req.body);
     res.json(newTodo);

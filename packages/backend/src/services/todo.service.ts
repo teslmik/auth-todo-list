@@ -11,7 +11,10 @@ export default class TodoService {
   }
 
   async findAll() {
-    const todos = await this.todoRepository.find();
+    const todos = await this.todoRepository
+      .createQueryBuilder('todos')
+      .orderBy('todos.createdAt', 'DESC')
+      .getMany();
     return todos;
   }
 
@@ -27,7 +30,10 @@ export default class TodoService {
   }
 
   async updateTodo(id: string, payload: Todo) {
-    await this.todoRepository.update(id, payload);
+    await this.todoRepository.update(id, {
+      ...payload,
+      updatedAt: new Date()
+    });
     const updatedTodo = await this.findOneById(id);
     return updatedTodo;
   }
