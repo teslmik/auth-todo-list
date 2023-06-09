@@ -1,10 +1,11 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import bcrypt from 'bcrypt';
 import { v4 } from 'uuid';
 import { Repository } from 'typeorm';
 
+import { createToken } from '../middleware';
 import { appDataSource } from '../config/app-data-source';
-import { User } from '../entities/entities';
-// import { tokenService } from './token.service';
+import { User } from '../entities';
 
 export default class UserService {
   private readonly userRepository: Repository<User>;
@@ -13,12 +14,7 @@ export default class UserService {
     this.userRepository = appDataSource.getRepository(User);
   }
 
-  async findAll() {
-    const users = await this.userRepository.find();
-    return users;
-  }
-
-  async singUp(email: string, password: string): Promise<User> {
+  async singUp(email: string, password: string): Promise<string> {
     const checkEmail = await this.userRepository.findOne({ where: { email } });
 
     if (checkEmail) {
@@ -33,33 +29,33 @@ export default class UserService {
       activationLink
     });
 
-    // await mailService.sendActivationMail({
-    //   to: email,
-    //   link: `${process.env.API_URL}/api/activate/${activationLink}`
-    // });
+    const token = createToken(user.id);
 
-    // const tokens = tokenService.generateToken({ ...user });
-    // await tokenService.saveToken(user.id, tokens.refreshToken);
+    return token;
+  }
+
+  async signIn(email: string, password: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new Error('Invalid email or password');
+    }
+
+    const isPassEquals = await bcrypt.compare(password, user.password);
+    if (!isPassEquals) {
+      throw new Error('Invalid email or password');
+    }
+
+    return { token: createToken(user.id), user };
+  }
+
+  async findAll() {
+    const users = await this.userRepository.find();
+    return users;
+  }
+
+  async findUserById(id: string) {
+    const user = await this.userRepository.findOneBy({ id });
 
     return user;
   }
-
-  // async findOneById(id: string) {
-  //   const todo = await this.userRepository.findOneBy({ id });
-
-  //   return todo;
-  // }
-  // async singIn() {}
-
-  // async updateTodo(id: string, payload: Todo) {
-  //   await this.userRepository.update(id, payload);
-  //   const updatedTodo = await this.findOneById(id);
-  //   return updatedTodo;
-  // }
-
-  // async deleteTodo(id: string) {
-  //   const deletedTodo = await this.findOneById(id);
-  //   await this.userRepository.delete(id);
-  //   return deletedTodo;
-  // }
 }

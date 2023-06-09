@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 
 import { appDataSource } from '../config/app-data-source';
-import { Todo } from '../entities/entities';
+import { Todo } from '../entities';
 
 export default class TodoService {
   private readonly todoRepository: Repository<Todo>;
@@ -24,8 +24,8 @@ export default class TodoService {
     return todo;
   }
 
-  async createTodo(payload: Todo): Promise<Todo> {
-    const newTodo = await this.todoRepository.save(payload);
+  async createTodo(payload: Todo, userId: string): Promise<Todo> {
+    const newTodo = await this.todoRepository.save({ ...payload, user: userId });
     return newTodo;
   }
 

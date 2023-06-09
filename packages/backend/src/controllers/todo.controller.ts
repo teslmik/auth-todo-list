@@ -1,4 +1,5 @@
 import { Response, Request, NextFunction } from 'express';
+import { User } from '../entities';
 import TodoService from '../services/todo.service';
 
 export class TodoController {
@@ -10,12 +11,13 @@ export class TodoController {
   }
 
   async getOneTodo(req: Request, res: Response) {
-    const todos = await this.todoService.findOneById(req.params.id);
-    res.json(todos);
+    const todo = await this.todoService.findOneById(req.params.id);
+    res.json(todo);
   }
 
   async create(req: Request, res: Response, next: NextFunction) {
-    const newTodo = await this.todoService.createTodo(req.body);
+    const { id: userId } = req.user as User;
+    const newTodo = await this.todoService.createTodo(req.body, userId);
     res.json(newTodo);
 
     next();

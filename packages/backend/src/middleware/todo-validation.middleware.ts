@@ -2,7 +2,7 @@ import joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
 
 import { StatusCode } from '../enums/enums';
-import { Todo } from '../entities/entities';
+import { Todo } from '../entities';
 
 const todoValidation = {
   create: (req: Request, res: Response, next: NextFunction) => {

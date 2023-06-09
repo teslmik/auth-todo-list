@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { User } from './entities';
+import { User } from '.';
 
 @Entity()
 export class Todo extends BaseEntity {
@@ -18,9 +18,6 @@ export class Todo extends BaseEntity {
   @Column({ default: false })
   private: boolean;
 
-  @ManyToOne(() => User, (user) => user.todosId)
-  user: string;
-
   @Column({
     type: 'timestamp',
     default: () => 'NOW()'
@@ -32,4 +29,7 @@ export class Todo extends BaseEntity {
     default: () => 'NOW()'
   })
   updatedAt: Date;
+
+  @ManyToOne(() => User, (user) => user.todos)
+  user: string;
 }

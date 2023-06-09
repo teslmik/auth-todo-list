@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { StatusCode } from '../enums/status-code.enum';
 import { appDataSource } from '../config/app-data-source';
-import { Todo } from '../entities/entities';
+import { Todo } from '../entities';
 
 const isExists = async (req: Request, res: Response, next: NextFunction) => {
   try {

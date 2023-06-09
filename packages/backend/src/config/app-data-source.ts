@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-import { Todo, User } from '../entities/entities';
+import { Todo, User } from '../entities';
 
 function getSSLConfig(env: string) {
   const configs: { [key: string]: boolean | { [key: string]: boolean } } = {

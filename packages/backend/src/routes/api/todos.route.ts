@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { isExists, todoValidation, tryCatchMiddleware } from '../../middleware/middlewares';
+import { checkAuth, isExists, todoValidation, tryCatchMiddleware } from '../../middleware';
 import todoController from '../../controllers/todo.controller';
 
 const todosRouter: Router = Router();
@@ -9,6 +9,7 @@ todosRouter.get('', tryCatchMiddleware(todoController.getAllTodo.bind(todoContro
 todosRouter.get('/:id', tryCatchMiddleware(todoController.getOneTodo.bind(todoController)));
 todosRouter.post(
   '',
+  checkAuth,
   todoValidation.create,
   tryCatchMiddleware(todoController.create.bind(todoController))
 );

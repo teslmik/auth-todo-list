@@ -1,12 +1,12 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { Todo } from './entities';
+import { Todo } from '.';
 
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
@@ -31,5 +31,5 @@ export class User extends BaseEntity {
   updatedAt: Date;
 
   @OneToMany(() => Todo, (todo) => todo.user, { cascade: true })
-  todosId: string[];
+  todos: string[];
 }

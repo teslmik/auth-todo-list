@@ -1,6 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
+import morgan from 'morgan';
 import 'dotenv/config';
 
 import AppRouter from './routes';
@@ -13,8 +15,9 @@ connectDB();
 
 // Express configuration
 app.set('port', process.env.PORT || 5003);
-app.use(bodyParser.json());
+app.use(morgan('dev'));
 app.use(cors());
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 router.init();
