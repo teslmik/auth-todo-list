@@ -1,5 +1,4 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-// eslint-disable-next-line import/no-cycle
 import { Todo } from './entities';
 
 @Entity()
@@ -12,6 +11,12 @@ export class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @Column({ default: false })
+  isActivated: boolean;
+
+  @Column()
+  activationLink: string;
 
   @Column({
     type: 'timestamp',

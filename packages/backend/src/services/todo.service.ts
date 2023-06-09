@@ -22,7 +22,7 @@ export default class TodoService {
   }
 
   async createTodo(payload: Todo): Promise<Todo> {
-    const newTodo: Todo = await this.todoRepository.save(payload);
+    const newTodo = await this.todoRepository.save(payload);
     return newTodo;
   }
 

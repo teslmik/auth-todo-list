@@ -59,6 +59,7 @@ rules:
   no-restricted-exports: 'off'
   max-len: ['error', { 'code': 140 }]
   class-methods-use-this: 'off'
+  import/no-cycle: 'off'
 
   # ⭐ React rules
   # This rule does not work with TS functions
