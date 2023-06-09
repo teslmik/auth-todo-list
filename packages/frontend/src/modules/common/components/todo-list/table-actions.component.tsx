@@ -22,6 +22,14 @@ export const TableActionsCell: React.FC<Props> = ({ row, handleOpen }) => {
     () => deleteTodo(row.id)
   ];
 
+  const handleEditTodo = () =>
+    editTodo({
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      complited: !row.complited
+    });
+
   return (
     <Box component="div" sx={{ display: 'flex', flexWrap: 'nowrap', gap: 1 }}>
       <ButtonGroup variant="contained" aria-label="outlined primary button group">
@@ -37,18 +45,7 @@ export const TableActionsCell: React.FC<Props> = ({ row, handleOpen }) => {
           </Button>
         ))}
       </ButtonGroup>
-      <Switch
-        checked={row.complited}
-        disabled={updPending}
-        onChange={() =>
-          editTodo({
-            id: row.id,
-            title: row.title,
-            description: row.description,
-            complited: !row.complited
-            // eslint-disable-next-line prettier/prettier
-          })}
-      />
+      <Switch checked={row.complited} disabled={updPending} onChange={handleEditTodo} />
     </Box>
   );
 };

@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
 import todoService from '../../../services/todos.service';
+import { handleError } from '../../../utils/handle-error.util';
+import { APP_KEYS } from '../consts';
 
-export const useGetOneTodo = (id: string) =>
-  useQuery({
-    queryFn: () => todoService.getOneTodo(id),
-    queryKey: ['todo', id],
-    onError: (err) => {
-      if (err instanceof Error) {
-        toast.error(err.message);
-      }
-    }
+export const useGetOneTodo = (id: string) => {
+  const handleQueryFn = () => todoService.getOneTodo(id);
+
+  return useQuery({
+    queryFn: handleQueryFn,
+    queryKey: [APP_KEYS.QUERY_KEYS.TODO, id],
+    onError: handleError
   });
+};

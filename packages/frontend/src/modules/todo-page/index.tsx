@@ -11,10 +11,17 @@ const TodoPageContainer: React.FC = () => {
   const { mutate: editTodo, isLoading: updPending } = useEditTodo();
 
   const handleOnClick = () => navigate('/');
-
   if (isLoading || !isSuccess) {
     return <Loader />;
   }
+
+  const handleEditTodo = () =>
+    editTodo({
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      complited: !data.complited
+    });
 
   return (
     <Box sx={{ height: '100%', mt: 1, display: 'flex', flexDirection: 'column' }}>
@@ -31,18 +38,7 @@ const TodoPageContainer: React.FC = () => {
         <Typography variant="h6" component="p">
           Complete:
         </Typography>
-        <Switch
-          checked={data.complited}
-          disabled={updPending}
-          onChange={() =>
-            editTodo({
-              id: data.id,
-              title: data.title,
-              description: data.description,
-              complited: !data.complited
-              // eslint-disable-next-line prettier/prettier
-            })}
-        />
+        <Switch checked={data.complited} disabled={updPending} onChange={handleEditTodo} />
       </Box>
       <Box sx={{ width: 288, display: 'flex', justifyContent: 'space-between', mb: 4, mt: 4 }}>
         <Typography variant="h6" component="p">
