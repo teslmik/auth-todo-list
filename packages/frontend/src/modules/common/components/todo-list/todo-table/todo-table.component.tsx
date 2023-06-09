@@ -2,17 +2,15 @@ import React from 'react';
 import { Paper, Table, TableContainer, TablePagination } from '@mui/material';
 import { TableHeader } from './table-header.component';
 import { TodoTableRows } from './todo-table-rows.component';
-import { Loader } from '../../loader';
 import { ITodo } from '../../../types';
 import { StylesBox } from './todo-table.styled';
 
 interface Props {
-  todos: ITodo[] | undefined;
+  todos: ITodo[];
   handleOpen: (id: string) => void;
-  isLoading: boolean;
 }
 
-export const TodoTable: React.FC<Props> = ({ todos, handleOpen, isLoading }) => {
+export const TodoTable: React.FC<Props> = ({ todos, handleOpen }) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -24,10 +22,6 @@ export const TodoTable: React.FC<Props> = ({ todos, handleOpen, isLoading }) => 
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-  if (isLoading || !todos) {
-    return <Loader />;
-  }
 
   return (
     <StylesBox>
