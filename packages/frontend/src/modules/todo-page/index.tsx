@@ -10,6 +10,8 @@ const TodoPageContainer: React.FC = () => {
   const { data, isLoading, isSuccess } = useGetOneTodo(id as string);
   const { mutate: editTodo, isLoading: updPending } = useEditTodo();
 
+  const handleOnClick = () => navigate('/');
+
   if (isLoading || !isSuccess) {
     return <Loader />;
   }
@@ -49,7 +51,7 @@ const TodoPageContainer: React.FC = () => {
         <Switch />
       </Box>
       <Box>
-        <Button variant="contained" sx={{ width: 288, mb: 5, mt: 4 }} onClick={() => navigate('/')}>
+        <Button variant="contained" sx={{ width: 288, mb: 5, mt: 4 }} onClick={handleOnClick}>
           Back
         </Button>
       </Box>

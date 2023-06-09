@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import todoService from '../../../services/todos.service';
+import { APP_KEYS } from '../consts';
 import { ITodo } from '../types';
 
 export const useEditTodo = () => {
@@ -8,8 +9,8 @@ export const useEditTodo = () => {
   return useMutation({
     mutationFn: (payload: ITodo) => todoService.editTodo(payload),
     onSuccess: (data) => {
-      client.invalidateQueries({ queryKey: ['todos'] });
-      client.invalidateQueries({ queryKey: ['todo', data.id] });
+      client.invalidateQueries({ queryKey: [APP_KEYS.QUERY_KEYS.TODOS] });
+      client.invalidateQueries({ queryKey: [APP_KEYS.QUERY_KEYS.TODO, data.id] });
     }
   });
 };

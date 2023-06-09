@@ -11,6 +11,8 @@ export const TodoButtonGroup: React.FC = () => {
     setButtonLabel(value);
   };
 
+  const handleClick = (buttonValue: ButtonType) => () => handleActive(buttonValue);
+
   return (
     <ButtonGroup variant="contained" aria-label="outlined primary button group">
       {buttonGroupData.map((button) => (
@@ -22,7 +24,7 @@ export const TodoButtonGroup: React.FC = () => {
               ? { backgroundColor: COLORS.buttonActive }
               : { backgroundColor: COLORS.button }
           }
-          onClick={() => handleActive(button.value)}
+          onClick={handleClick(button.value)}
         >
           {button.label}
         </Button>

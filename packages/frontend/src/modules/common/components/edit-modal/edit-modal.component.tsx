@@ -2,7 +2,7 @@ import { Box, Button, Fade, Modal, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import React from 'react';
 import { useCreateTodos, useEditTodo } from '../../hooks';
-import { ITodo } from '../../types';
+import { ITodoCreate, ITodo } from '../../types';
 import { editModalStyled } from './edit-modal.styled';
 
 interface Props {
@@ -15,20 +15,24 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
   const { mutate: create } = useCreateTodos();
   const { mutate: editTodo } = useEditTodo();
 
+  const handleOnSudmit = (data: ITodoCreate) => {
+    if (isOpen.edit && todo) {
+      editTodo({ id: todo.id, complited: todo.complited, ...data });
+    } else {
+      create(data);
+    }
+    setIsOpen({ open: false });
+  };
+
   const { values, handleChange, handleSubmit, setFieldValue } = useFormik({
     initialValues: {
       title: '',
       description: ''
     },
-    onSubmit: (data) => {
-      if (isOpen.edit && todo) {
-        editTodo({ id: todo.id, complited: todo.complited, ...data });
-      } else {
-        create(data);
-      }
-      setIsOpen({ open: false });
-    }
+    onSubmit: handleOnSudmit
   });
+
+  const handleOnClose = () => setIsOpen((prev) => ({ open: false, edit: prev.edit }));
 
   React.useEffect(() => {
     if (isOpen.edit && todo) {
@@ -43,7 +47,7 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
   return (
     <Modal
       open={isOpen.open}
-      onClose={() => setIsOpen((prev) => ({ open: false, edit: prev.edit }))}
+      onClose={handleOnClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
       sx={{ p: 4 }}

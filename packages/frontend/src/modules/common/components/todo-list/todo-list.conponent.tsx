@@ -21,12 +21,7 @@ export const TodoList: React.FC = () => {
 
   return (
     <>
-      <TodoTable
-        todos={todos}
-        handleOpen={handleOpen}
-        isLoading={isLoading}
-        isSuccess={isSuccess}
-      />
+      <TodoTable todos={todos} handleOpen={handleOpen} isLoading={isLoading} />
       <TodoSlider
         todos={todos}
         handleOpen={handleOpen}

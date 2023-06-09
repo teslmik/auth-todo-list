@@ -8,24 +8,22 @@ export const Header: React.FC = () => {
   const { pathname } = useLocation();
   const { setIsOpen } = useGlobalContext();
 
+  const handleIsOpen = () => setIsOpen({ open: true, edit: false });
+
   return (
     <Container>
       <AppBar position="static" color="transparent" sx={{ boxShadow: 'none' }}>
         <Toolbar
           sx={{
             width: '100%',
-            justifyContent: `${
-              pathname === APP_KEYS.ROUTER_KEYS.ROOT ? 'space-between' : 'flex-end'
-            }`,
+            justifyContent: `
+              ${pathname === APP_KEYS.ROUTER_KEYS.ROOT ? 'space-between' : 'flex-end'}
+            `,
             padding: 0
           }}
         >
           {pathname === APP_KEYS.ROUTER_KEYS.ROOT && (
-            <Button
-              color="inherit"
-              variant="outlined"
-              onClick={() => setIsOpen({ open: true, edit: false })}
-            >
+            <Button color="inherit" variant="outlined" onClick={handleIsOpen}>
               Add ToDo
             </Button>
           )}

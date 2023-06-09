@@ -10,10 +10,9 @@ interface Props {
   todos: ITodo[] | undefined;
   handleOpen: (id: string) => void;
   isLoading: boolean;
-  isSuccess: boolean;
 }
 
-export const TodoTable: React.FC<Props> = ({ todos, handleOpen, isLoading, isSuccess }) => {
+export const TodoTable: React.FC<Props> = ({ todos, handleOpen, isLoading }) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -26,7 +25,7 @@ export const TodoTable: React.FC<Props> = ({ todos, handleOpen, isLoading, isSuc
     setPage(0);
   };
 
-  if (isLoading || !isSuccess || !todos) {
+  if (isLoading || !todos) {
     return <Loader />;
   }
 

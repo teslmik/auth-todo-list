@@ -10,6 +10,8 @@ export const STORAGE_KEYS = {
 export const QUERY_KEYS = {
   EXAMPLE: 'EXAMPLE',
   TOKEN: 'TOKEN',
+  TODOS: 'TODOS',
+  TODO: 'TODO',
   STATISTIC: 'statistic',
   TRENDING: 'trending'
 };
