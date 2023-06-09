@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 
 import { appDataSource } from '../config/app-data-source';
 import { User } from '../entities/entities';
-import { tokenService } from './token.service';
+// import { tokenService } from './token.service';
 
 export default class UserService {
   private readonly userRepository: Repository<User>;
@@ -18,14 +18,7 @@ export default class UserService {
     return users;
   }
 
-  async singUp(
-    email: string,
-    password: string
-  ): Promise<{
-    accessToken: string;
-    refreshToken: string;
-    user: User;
-  }> {
+  async singUp(email: string, password: string): Promise<User> {
     const checkEmail = await this.userRepository.findOne({ where: { email } });
 
     if (checkEmail) {
@@ -45,10 +38,10 @@ export default class UserService {
     //   link: `${process.env.API_URL}/api/activate/${activationLink}`
     // });
 
-    const tokens = tokenService.generateToken({ ...user });
-    await tokenService.saveToken(user.id, tokens.refreshToken);
+    // const tokens = tokenService.generateToken({ ...user });
+    // await tokenService.saveToken(user.id, tokens.refreshToken);
 
-    return { ...tokens, user };
+    return user;
   }
 
   // async findOneById(id: string) {
