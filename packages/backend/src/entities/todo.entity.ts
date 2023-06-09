@@ -20,4 +20,16 @@ export class Todo extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.todosId)
   user: string;
+
+  @Column({
+    type: 'timestamp',
+    default: () => 'NOW()'
+  })
+  createdAt: Date;
+
+  @Column({
+    type: 'timestamp',
+    default: () => 'NOW()'
+  })
+  updatedAt: Date;
 }
