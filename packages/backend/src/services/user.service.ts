@@ -1,11 +1,13 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import bcrypt from 'bcrypt';
 import { v4 } from 'uuid';
 import { Repository } from 'typeorm';
 
-import { createToken } from '../middleware';
 import { appDataSource } from '../config/app-data-source';
 import { User } from '../entities';
+import { mailService } from './mail.service';
+import { tokenService } from './token.service';
+import { IUserUpdateDto } from '../types/types';
+import { editEmailPasswordBoth, generateRandomPassword } from '../utils';
 
 export default class UserService {
   private readonly userRepository: Repository<User>;
@@ -14,8 +16,8 @@ export default class UserService {
     this.userRepository = appDataSource.getRepository(User);
   }
 
-  async singUp(email: string, password: string): Promise<string> {
-    const checkEmail = await this.userRepository.findOne({ where: { email } });
+  async singUp(email: string, password: string): Promise<{ token: string }> {
+    const checkEmail = await this.findUserByEmail(email);
 
     if (checkEmail) {
       throw new Error(`User with email address ${email} already exists`);
@@ -28,14 +30,18 @@ export default class UserService {
       password: hashPassword,
       activationLink
     });
+    await mailService.sendActivationMail({
+      to: email,
+      link: `${process.env.API_URL}/api/user/activate/${activationLink}`
+    });
 
-    const token = createToken(user.id);
+    const token = tokenService.createToken({ id: user.id });
 
-    return token;
+    return { token };
   }
 
   async signIn(email: string, password: string) {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.findUserByEmail(email);
     if (!user) {
       throw new Error('Invalid email or password');
     }
@@ -45,7 +51,38 @@ export default class UserService {
       throw new Error('Invalid email or password');
     }
 
-    return { token: createToken(user.id), user };
+    return { token: tokenService.createToken({ id: user.id }) };
+  }
+
+  async edit(payload: IUserUpdateDto) {
+    const editedPayload = await editEmailPasswordBoth(payload);
+    const editedUser = await this.userRepository.save({
+      ...editedPayload,
+      updatedAt: new Date()
+    });
+
+    return editedUser;
+  }
+
+  async recovery(email: string) {
+    const user = await this.findUserByEmail(email);
+
+    if (!user) {
+      throw new Error(`User with email address ${email} is not registered`);
+    }
+
+    const newPassword = generateRandomPassword(8);
+    const hashPassword = await bcrypt.hash(newPassword, 3);
+
+    await mailService.sendActivationMail({
+      to: email,
+      link: newPassword,
+      recovery: true
+    });
+
+    await this.userRepository.save({ ...user, password: hashPassword });
+
+    return hashPassword;
   }
 
   async findAll() {
@@ -53,9 +90,25 @@ export default class UserService {
     return users;
   }
 
-  async findUserById(id: string) {
-    const user = await this.userRepository.findOneBy({ id });
+  async findUserById(payload: string) {
+    const user = await this.userRepository.findOne({ where: { id: payload } });
 
     return user;
+  }
+
+  async findUserByEmail(payload: string) {
+    const user = await this.userRepository.findOne({ where: { email: payload } });
+
+    return user;
+  }
+
+  async activate(activationLink: string) {
+    const user = await this.userRepository.findOne({ where: { activationLink } });
+    if (!user) {
+      throw new Error('Incorrect activation link!');
+    }
+
+    user.isActivated = true;
+    await user.save();
   }
 }

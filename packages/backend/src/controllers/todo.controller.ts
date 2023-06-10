@@ -1,11 +1,12 @@
 import { Response, Request, NextFunction } from 'express';
+import { StatusCode } from '../enums/status-code.enum';
 import { User } from '../entities';
 import TodoService from '../services/todo.service';
 
 export class TodoController {
   constructor(private todoService: TodoService) {}
 
-  async getAllTodo(_: Request, res: Response) {
+  async getAllTodo(req: Request, res: Response) {
     const todos = await this.todoService.findAll();
     res.json(todos);
   }
@@ -16,16 +17,18 @@ export class TodoController {
   }
 
   async create(req: Request, res: Response, next: NextFunction) {
-    const { id: userId } = req.user as User;
-    const newTodo = await this.todoService.createTodo(req.body, userId);
-    res.json(newTodo);
+    if (!req.user) {
+      throw new Error('Unauthorized');
+    }
+    const newTodo = await this.todoService.createTodo(req.body, req.user as User);
+    res.status(StatusCode.CREATED).json(newTodo);
 
     next();
   }
 
   async update(req: Request, res: Response, next: NextFunction) {
     const updatedTodo = await this.todoService.updateTodo(req.params.id, req.body);
-    res.json(updatedTodo);
+    res.status(StatusCode.OK).json(updatedTodo);
 
     next();
   }

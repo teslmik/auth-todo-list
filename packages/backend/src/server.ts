@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';

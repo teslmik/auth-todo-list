@@ -5,8 +5,13 @@ import todoController from '../../controllers/todo.controller';
 
 const todosRouter: Router = Router();
 
-todosRouter.get('', tryCatchMiddleware(todoController.getAllTodo.bind(todoController)));
-todosRouter.get('/:id', tryCatchMiddleware(todoController.getOneTodo.bind(todoController)));
+todosRouter.get('', checkAuth, tryCatchMiddleware(todoController.getAllTodo.bind(todoController)));
+todosRouter.get(
+  '/:id',
+  checkAuth,
+  isExists,
+  tryCatchMiddleware(todoController.getOneTodo.bind(todoController))
+);
 todosRouter.post(
   '',
   checkAuth,
@@ -15,12 +20,14 @@ todosRouter.post(
 );
 todosRouter.put(
   '/:id',
+  checkAuth,
   isExists,
   todoValidation.update,
   tryCatchMiddleware(todoController.update.bind(todoController))
 );
 todosRouter.delete(
   '/:id',
+  checkAuth,
   isExists,
   tryCatchMiddleware(todoController.delete.bind(todoController))
 );

@@ -31,5 +31,5 @@ export class User extends BaseEntity {
   updatedAt: Date;
 
   @OneToMany(() => Todo, (todo) => todo.user, { cascade: true })
-  todos: string[];
+  todos: Todo[];
 }

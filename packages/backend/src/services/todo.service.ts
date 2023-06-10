@@ -1,7 +1,8 @@
 import { Repository } from 'typeorm';
 
 import { appDataSource } from '../config/app-data-source';
-import { Todo } from '../entities';
+import { ITodoRequestDto } from '../types/types';
+import { Todo, User } from '../entities';
 
 export default class TodoService {
   private readonly todoRepository: Repository<Todo>;
@@ -11,22 +12,40 @@ export default class TodoService {
   }
 
   async findAll() {
-    const todos = await this.todoRepository
-      .createQueryBuilder('todos')
-      .orderBy('todos.createdAt', 'DESC')
-      .getMany();
-    return todos;
+    const todos = await this.todoRepository.find({
+      where: { private: false },
+      order: { createdAt: 'DESC' },
+      relations: ['user']
+    });
+
+    const result = todos.map((todo) => {
+      const { user, ...restTodo } = todo;
+      return { ...restTodo, userId: user.id };
+    });
+
+    return result;
   }
 
   async findOneById(id: string) {
-    const todo = await this.todoRepository.findOneBy({ id });
+    const todo = await this.todoRepository.findOne({
+      where: {
+        id,
+        private: false
+      },
+      relations: ['user']
+    });
 
-    return todo;
+    const { user, ...restTodo } = todo as Todo;
+
+    return { ...restTodo, userId: user.id };
   }
 
-  async createTodo(payload: Todo, userId: string): Promise<Todo> {
-    const newTodo = await this.todoRepository.save({ ...payload, user: userId });
-    return newTodo;
+  async createTodo(
+    payload: ITodoRequestDto,
+    user: User
+  ): Promise<Partial<Todo> & { userId: string }> {
+    const { user: owner, ...restTodo } = await this.todoRepository.save({ ...payload, user });
+    return { ...restTodo, userId: owner.id };
   }
 
   async updateTodo(id: string, payload: Todo) {

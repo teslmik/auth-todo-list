@@ -13,7 +13,7 @@ export class Todo extends BaseEntity {
   description: string;
 
   @Column({ default: false })
-  complited: boolean;
+  completed: boolean;
 
   @Column({ default: false })
   private: boolean;
@@ -30,6 +30,8 @@ export class Todo extends BaseEntity {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.todos)
-  user: string;
+  @ManyToOne(() => User, (user) => user.todos, {
+    onDelete: 'CASCADE'
+  })
+  user: User;
 }

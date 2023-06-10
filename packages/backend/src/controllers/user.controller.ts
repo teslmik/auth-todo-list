@@ -1,6 +1,7 @@
 import { Response, Request, NextFunction } from 'express';
 import UserService from '../services/user.service';
 import { User } from '../entities';
+import { StatusCode } from '../enums/status-code.enum';
 
 export class UserController {
   constructor(private userService: UserService) {}
@@ -9,7 +10,7 @@ export class UserController {
     const { email, password }: User = req.body;
 
     const userData = await this.userService.singUp(email, password);
-    res.json(userData);
+    res.status(StatusCode.CREATED).json(userData);
 
     next();
   }
@@ -23,6 +24,23 @@ export class UserController {
     next();
   }
 
+  async editUser(req: Request, res: Response, next: NextFunction) {
+    const token = req.headers.authorization?.split(' ')[1];
+    const userData = await this.userService.edit({ ...req.body, token });
+
+    res.json(userData);
+
+    next();
+  }
+
+  async recoveryPassword(req: Request, res: Response, next: NextFunction) {
+    const hashPassword = await this.userService.recovery(req.body.email);
+
+    res.json(hashPassword);
+
+    next();
+  }
+
   async getAllUsers(_: Request, res: Response) {
     const users = await this.userService.findAll();
     res.json(users);
@@ -31,6 +49,17 @@ export class UserController {
   async getOneUserById(req: Request, res: Response) {
     const user = await this.userService.findUserById(req.params.id);
     res.json(user);
+  }
+
+  async activateUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const activationLink = req.params.link;
+      await this.userService.activate(activationLink);
+
+      return res.redirect(process.env.CLIENT_URL as string);
+    } catch (error) {
+      next(error);
+    }
   }
 }
 
