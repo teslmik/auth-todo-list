@@ -28,6 +28,6 @@ export const ROUTER_KEYS = {
   ROOT: '/',
   HOME: 'home',
   TODOS: 'todos',
-  AUTHORIZED: 'authorized',
+  AUTH: 'auth',
   NOT_FOUND: '*'
 };
