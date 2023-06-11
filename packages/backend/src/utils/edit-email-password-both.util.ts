@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { v4 } from 'uuid';
 import UserService from '../services/user.service';
 import { tokenService } from '../services/token.service';
-import { IUserUpdateDto, IEditedUserData } from '../types/types';
+import { IUserUpdateDto, IEditedUserData } from '../types';
 import { mailService } from '../services/mail.service';
 
 export const editEmailPasswordBoth = async (payload: IUserUpdateDto): Promise<IEditedUserData> => {

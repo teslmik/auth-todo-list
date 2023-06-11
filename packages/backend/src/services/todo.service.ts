@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 
 import { appDataSource } from '../config/app-data-source';
-import { ITodoRequestDto, IUpdateTodoRequestDto } from '../types/types';
+import { ITodoRequestDto, IUpdateTodoRequestDto } from '../types';
 import { Todo, User } from '../entities';
 
 export default class TodoService {

@@ -1,5 +1,5 @@
 import NodeMailer from 'nodemailer';
-import { EmailProperties } from '../types/types';
+import { EmailProperties } from '../types';
 
 class MailService {
   private nodeMailer: typeof NodeMailer;

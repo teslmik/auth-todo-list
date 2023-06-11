@@ -1,7 +1,7 @@
 import joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
 
-import { StatusCode } from '../enums/enums';
+import { StatusCode } from '../enums';
 
 export const validateRequest =
   (schema: joi.ObjectSchema) => (req: Request, res: Response, next: NextFunction) => {

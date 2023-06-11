@@ -6,7 +6,7 @@ import { appDataSource } from '../config/app-data-source';
 import { User } from '../entities';
 import { mailService } from './mail.service';
 import { tokenService } from './token.service';
-import { IUserUpdateDto } from '../types/types';
+import { IUserUpdateDto } from '../types';
 import { editEmailPasswordBoth, generateRandomPassword } from '../utils';
 
 export default class UserService {
