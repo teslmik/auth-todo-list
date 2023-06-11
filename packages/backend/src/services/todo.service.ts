@@ -27,7 +27,12 @@ export default class TodoService {
   }
 
   async findOneById(id: string, authUser: User) {
+    if (!authUser.isActivated) {
+      throw new Error('User is not activated, please check your mail ');
+    }
+
     const todo = await this.todoRepository.findOne({ where: { id }, relations: ['user'] });
+
     if (todo?.user.id !== authUser.id && todo?.private === true) {
       throw new Error('Access denied');
     }
@@ -41,15 +46,23 @@ export default class TodoService {
     payload: ITodoRequestDto,
     user: User
   ): Promise<Partial<Todo> & { userId: string }> {
+    if (!user.isActivated) {
+      throw new Error('User is not activated, please check your mail ');
+    }
+
     const { user: owner, ...restTodo } = await this.todoRepository.save({ ...payload, user });
 
     return { ...restTodo, userId: owner.id };
   }
 
   async updateTodo(id: string, payload: IUpdateTodoRequestDto, authUser: User) {
+    if (!authUser.isActivated) {
+      throw new Error('User is not activated, please check your mail ');
+    }
+
     const currentTodo = await this.todoRepository.findOne({ where: { id } });
 
-    if (currentTodo?.private !== payload.private && currentTodo?.private === false) {
+    if (currentTodo && currentTodo.private !== payload.private && !currentTodo.private) {
       throw new Error('Access denied');
     }
 
@@ -64,6 +77,10 @@ export default class TodoService {
   }
 
   async deleteTodo(id: string, user: User) {
+    if (!user.isActivated) {
+      throw new Error('User is not activated, please check your mail ');
+    }
+
     const deletedTodo = await this.findOneById(id, user);
     await this.todoRepository.delete(id);
     return deletedTodo;
