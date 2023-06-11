@@ -26,10 +26,14 @@ const userValidation = {
         'string.pattern.base': 'Invalid email format'
       }),
       password: joi.string().pattern(passwordRegExp).messages({
-        'string.pattern':
+        'string.pattern.base':
           'Password must contain at least one uppercase letter, one lowercase letter, one number and one symbol'
       }),
-      newPassword: joi.string().valid(joi.ref('password')).messages({
+      newPassword: joi.string().pattern(passwordRegExp).messages({
+        'string.pattern.base':
+          'Password must contain at least one uppercase letter, one lowercase letter, one number and one symbol'
+      }),
+      repeatPassword: joi.string().valid(joi.ref('newPassword')).messages({
         'any.only': 'Password mismatch'
       })
     })

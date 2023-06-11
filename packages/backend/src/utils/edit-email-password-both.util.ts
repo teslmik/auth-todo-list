@@ -39,10 +39,10 @@ export const editEmailPasswordBoth = async (payload: IUserUpdateDto): Promise<IE
     const isMatch = await bcrypt.compare(payload.password, user.password);
 
     if (!isMatch) {
-      throw new Error('Current password is incorrect.');
+      throw new Error('Current password is incorrect');
     }
 
-    updatedPayload.password = await bcrypt.hash(payload.newPassword, 3);
+    updatedPayload.password = await userService.getHashPassword(payload.newPassword);
   }
 
   updatedPayload.isActivated = false;
@@ -55,6 +55,7 @@ export const editEmailPasswordBoth = async (payload: IUserUpdateDto): Promise<IE
 
   delete updatedPayload.token;
   delete updatedPayload.newPassword;
+  delete updatedPayload.repeatPassword;
 
   return updatedPayload;
 };

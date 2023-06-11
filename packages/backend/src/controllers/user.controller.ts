@@ -26,9 +26,12 @@ export class UserController {
 
   async editUser(req: Request, res: Response, next: NextFunction) {
     const token = req.headers.authorization?.split(' ')[1];
-    const userData = await this.userService.edit({ ...req.body, token });
+    const { id, email, updatedAt, isActivated } = await this.userService.edit({
+      ...req.body,
+      token
+    });
 
-    res.json(userData);
+    res.json({ id, email, updatedAt, isActivated });
 
     next();
   }

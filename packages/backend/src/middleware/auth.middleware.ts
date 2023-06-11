@@ -15,6 +15,7 @@ const jwtOptions = {
 const jwtAuthHandler = async (jwtPayload: any, done: any) => {
   try {
     const user = await userService.findUserById(jwtPayload.id);
+
     if (user) {
       return done(null, user);
     }

@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 
 import { appDataSource } from '../config/app-data-source';
-import { ITodoRequestDto } from '../types/types';
+import { ITodoRequestDto, IUpdateTodoRequestDto } from '../types/types';
 import { Todo, User } from '../entities';
 
 export default class TodoService {
@@ -26,14 +26,11 @@ export default class TodoService {
     return result;
   }
 
-  async findOneById(id: string) {
-    const todo = await this.todoRepository.findOne({
-      where: {
-        id,
-        private: false
-      },
-      relations: ['user']
-    });
+  async findOneById(id: string, authUser: User) {
+    const todo = await this.todoRepository.findOne({ where: { id }, relations: ['user'] });
+    if (todo?.user.id !== authUser.id && todo?.private === true) {
+      throw new Error('Access denied');
+    }
 
     const { user, ...restTodo } = todo as Todo;
 
@@ -45,20 +42,29 @@ export default class TodoService {
     user: User
   ): Promise<Partial<Todo> & { userId: string }> {
     const { user: owner, ...restTodo } = await this.todoRepository.save({ ...payload, user });
+
     return { ...restTodo, userId: owner.id };
   }
 
-  async updateTodo(id: string, payload: Todo) {
+  async updateTodo(id: string, payload: IUpdateTodoRequestDto, authUser: User) {
+    const currentTodo = await this.todoRepository.findOne({ where: { id } });
+
+    if (currentTodo?.private !== payload.private && currentTodo?.private === false) {
+      throw new Error('Access denied');
+    }
+
     await this.todoRepository.update(id, {
       ...payload,
       updatedAt: new Date()
     });
-    const updatedTodo = await this.findOneById(id);
+
+    const updatedTodo = await this.findOneById(id, authUser);
+
     return updatedTodo;
   }
 
-  async deleteTodo(id: string) {
-    const deletedTodo = await this.findOneById(id);
+  async deleteTodo(id: string, user: User) {
+    const deletedTodo = await this.findOneById(id, user);
     await this.todoRepository.delete(id);
     return deletedTodo;
   }

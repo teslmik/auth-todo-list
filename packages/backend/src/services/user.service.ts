@@ -16,6 +16,12 @@ export default class UserService {
     this.userRepository = appDataSource.getRepository(User);
   }
 
+  async getHashPassword(password: string) {
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(password, salt);
+    return hashPassword;
+  }
+
   async singUp(email: string, password: string): Promise<{ token: string }> {
     const checkEmail = await this.findUserByEmail(email);
 
@@ -23,11 +29,10 @@ export default class UserService {
       throw new Error(`User with email address ${email} already exists`);
     }
 
-    const hashPassword = await bcrypt.hash(password, 3);
     const activationLink = v4();
     const user: User = await this.userRepository.save({
       email,
-      password: hashPassword,
+      password: await this.getHashPassword(password),
       activationLink
     });
     await mailService.sendActivationMail({
@@ -72,7 +77,7 @@ export default class UserService {
     }
 
     const newPassword = generateRandomPassword(8);
-    const hashPassword = await bcrypt.hash(newPassword, 3);
+    const hashPassword = await this.getHashPassword(newPassword);
 
     await mailService.sendActivationMail({
       to: email,
@@ -82,7 +87,7 @@ export default class UserService {
 
     await this.userRepository.save({ ...user, password: hashPassword });
 
-    return hashPassword;
+    return { newPassword: hashPassword };
   }
 
   async findAll() {

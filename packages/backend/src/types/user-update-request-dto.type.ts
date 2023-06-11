@@ -3,4 +3,5 @@ export interface IUserUpdateDto {
   email?: string;
   password?: string;
   newPassword?: string;
+  repeatPassword?: string;
 }
