@@ -7,7 +7,7 @@ export class TodoController {
   constructor(private todoService: TodoService) {}
 
   async getAllTodo(req: Request, res: Response) {
-    const todos = await this.todoService.findAll();
+    const todos = await this.todoService.findAll(req.user as User);
 
     res.json(todos);
   }

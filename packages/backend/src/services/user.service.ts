@@ -22,7 +22,7 @@ export default class UserService {
     return hashPassword;
   }
 
-  async singUp(email: string, password: string): Promise<{ token: string }> {
+  async singUp(email: string, password: string): Promise<string> {
     const checkEmail = await this.findUserByEmail(email);
 
     if (checkEmail) {
@@ -42,10 +42,10 @@ export default class UserService {
 
     const token = tokenService.createToken({ id: user.id });
 
-    return { token };
+    return token;
   }
 
-  async signIn(email: string, password: string) {
+  async signIn(email: string, password: string): Promise<string> {
     const user = await this.findUserByEmail(email);
     if (!user) {
       throw new Error('Invalid email or password');
@@ -56,7 +56,7 @@ export default class UserService {
       throw new Error('Invalid email or password');
     }
 
-    return { token: tokenService.createToken({ id: user.id }) };
+    return tokenService.createToken({ id: user.id });
   }
 
   async edit(payload: IUserUpdateDto) {

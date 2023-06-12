@@ -10,7 +10,7 @@ class TokenService {
 
   validateToken(token: string) {
     try {
-      const userData = jwt.verify(token, process.env.JWT_SECRET) as { id: string };
+      const userData = jwt.verify(token.split(' ')[0], process.env.JWT_SECRET) as { id: string };
 
       return userData;
     } catch (error) {

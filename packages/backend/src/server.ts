@@ -2,6 +2,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
+import passport from 'passport';
 import 'dotenv/config';
 
 import AppRouter from './routes';
@@ -9,11 +10,12 @@ import connectDB from './config/database';
 
 const app = express();
 const router = new AppRouter(app);
-// Connect to DB
+// C onnect to DB
 connectDB();
 
 // Express configuration
 app.set('port', process.env.PORT || 5003);
+app.use(passport.initialize());
 app.use(morgan('dev'));
 app.use(cors());
 app.use(bodyParser.json());

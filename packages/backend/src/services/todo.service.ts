@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 import { appDataSource } from '../config/app-data-source';
 import { ITodoRequestDto, IUpdateTodoRequestDto } from '../types';
@@ -11,9 +11,9 @@ export default class TodoService {
     this.todoRepository = appDataSource.getRepository(Todo);
   }
 
-  async findAll() {
+  async findAll(currentUser: User) {
     const todos = await this.todoRepository.find({
-      where: { private: false },
+      where: [{ user: { id: currentUser.id } }, { private: false, user: Not(currentUser.id) }],
       order: { createdAt: 'DESC' },
       relations: ['user']
     });
@@ -60,9 +60,14 @@ export default class TodoService {
       throw new Error('User is not activated, please check your mail ');
     }
 
-    const currentTodo = await this.todoRepository.findOne({ where: { id } });
+    const currentTodo = await this.todoRepository.findOne({ where: { id }, relations: ['user'] });
 
-    if (currentTodo && currentTodo.private !== payload.private && !currentTodo.private) {
+    if (
+      currentTodo &&
+      currentTodo.private !== payload.private &&
+      !currentTodo.private &&
+      currentTodo.user.id !== authUser.id
+    ) {
       throw new Error('Access denied');
     }
 
@@ -71,7 +76,7 @@ export default class TodoService {
       updatedAt: new Date()
     });
 
-    const updatedTodo = await this.findOneById(id, authUser);
+    const updatedTodo = await this.todoRepository.findOne({ where: { id } });
 
     return updatedTodo;
   }

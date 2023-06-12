@@ -1,5 +1,6 @@
 import { Response, Request, NextFunction } from 'express';
 import UserService from '../services/user.service';
+import { tokenService } from '../services/token.service';
 import { User } from '../entities';
 import { StatusCode } from '../enums/status-code.enum';
 
@@ -50,7 +51,11 @@ export class UserController {
   }
 
   async getOneUserById(req: Request, res: Response) {
-    const user = await this.userService.findUserById(req.params.id);
+    const { id } = tokenService.validateToken(req.headers.authorization as string) as {
+      id: string;
+    };
+
+    const user = await this.userService.findUserById(id);
     res.json(user);
   }
 
