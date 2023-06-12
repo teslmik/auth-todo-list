@@ -12,7 +12,7 @@ const MainLayout: React.FC = () => {
     <>
       {pathname === `/${APP_KEYS.ROUTER_KEYS.AUTH}` ? null : <Header />}
       <Divider variant="middle" />
-      <Container sx={{ height: 'calc(100vh - 74px)' }}>
+      <Container sx={{ height: 'calc(100vh - 98px)' }}>
         <Outlet />
       </Container>
       <div>

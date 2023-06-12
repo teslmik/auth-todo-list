@@ -21,19 +21,17 @@ export const profileValidate = (values: {
     errors.email = 'Invalid email address';
   }
 
-  if (!values.password) {
-    errors.password = 'Password is required';
-  } else if (
-    !/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%\\^&\\*])(?=.{8,})/.test(values.password)
+  if (
+    !/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%\\^&\\*])(?=.{8,})/.test(values.password) &&
+    values.password
   ) {
     errors.password =
       'Password must contain at least one uppercase letter, one lowercase letter, one number and one symbol';
   }
 
-  if (!values.newPassword) {
-    errors.newPassword = 'Password is required';
-  } else if (
-    !/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%\\^&\\*])(?=.{8,})/.test(values.password)
+  if (
+    !/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%\\^&\\*])(?=.{8,})/.test(values.newPassword) &&
+    values.newPassword
   ) {
     errors.newPassword =
       'Password must contain at least one uppercase letter, one lowercase letter, one number and one symbol';

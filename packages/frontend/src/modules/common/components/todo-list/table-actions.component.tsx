@@ -2,7 +2,7 @@ import { Box, Button, ButtonGroup, Switch } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { APP_KEYS, buttonGroupActions } from '../../consts';
-import { useDeleteTodo, useEditTodo } from '../../hooks';
+import { useDeleteTodo, useEditTodo, useGetOneTodo } from '../../hooks';
 import { ITodo } from '../../types';
 
 interface Props {
@@ -15,10 +15,14 @@ export const TableActionsCell: React.FC<Props> = ({ row, handleOpen }) => {
 
   const { mutate: deleteTodo, isLoading: delPending } = useDeleteTodo();
   const { mutate: editTodo, isLoading: updPending } = useEditTodo();
+  const { refetch } = useGetOneTodo(row.id);
 
   const buttonActionHandlers = [
     () => navigate(`${APP_KEYS.ROUTER_KEYS.TODOS}/${row.id}`),
-    () => handleOpen(row.id),
+    () => {
+      handleOpen(row.id);
+      refetch();
+    },
     () => deleteTodo(row.id)
   ];
 
@@ -27,7 +31,8 @@ export const TableActionsCell: React.FC<Props> = ({ row, handleOpen }) => {
       id: row.id,
       title: row.title,
       description: row.description,
-      complited: !row.complited
+      completed: !row.completed,
+      private: row.private
     });
 
   return (
@@ -45,7 +50,7 @@ export const TableActionsCell: React.FC<Props> = ({ row, handleOpen }) => {
           </Button>
         ))}
       </ButtonGroup>
-      <Switch checked={row.complited} disabled={updPending} onChange={handleEditTodo} />
+      <Switch checked={row.completed} disabled={updPending} onChange={handleEditTodo} />
     </Box>
   );
 };

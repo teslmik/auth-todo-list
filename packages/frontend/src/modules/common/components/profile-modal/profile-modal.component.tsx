@@ -1,6 +1,8 @@
 import { Box, Button, Fade, Modal, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import React from 'react';
+import { useGetUser, useEditUser, useRecoveryPassword } from '../../hooks';
+import { IUpdateUser } from '../../types';
 import { profileValidate } from '../../validation';
 import { profileModalStyled } from './profile-modal.styled';
 
@@ -10,14 +12,22 @@ interface Props {
 }
 
 export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
-  const handleOnSudmit = (data: { newPassword: string; email: string; password: string }) => {
-    // eslint-disable-next-line no-console
-    console.log('data: ', data);
+  const { data: userData, isSuccess } = useGetUser();
+  const { mutate: editUser } = useEditUser();
+  const { mutate: recovery } = useRecoveryPassword();
+
+  const handleOnSudmit = (data: IUpdateUser) => {
+    if (isOpen.recovery) {
+      recovery(data.email);
+    } else if (!data.password && !data.newPassword) {
+      editUser({ email: data.email });
+    } else editUser(data);
+
     setIsOpen({ open: false });
   };
 
-  const { values, handleChange, handleSubmit, setFieldValue, errors, isValid, touched } = useFormik(
-    {
+  const { values, handleChange, handleSubmit, setFieldValue, errors, isValid, touched, resetForm } =
+    useFormik({
       initialValues: {
         email: '',
         password: '',
@@ -25,19 +35,23 @@ export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       },
       validate: profileValidate,
       onSubmit: handleOnSudmit
-    }
-  );
+    });
 
-  const handleOnClose = () => setIsOpen((prev) => ({ open: false, recovery: prev.recovery }));
+  const handleOnClose = () => {
+    setIsOpen((prev) => ({ open: false, recovery: prev.recovery }));
+    resetForm();
+  };
 
   React.useEffect(() => {
-    if (isOpen.recovery) {
-      setFieldValue('email', '');
-    } else {
-      setFieldValue('email', 'teslmik@gmail.com');
-      setFieldValue('password', '');
+    if (isSuccess) {
+      if (isOpen.recovery) {
+        setFieldValue('email', '');
+      } else {
+        setFieldValue('email', userData?.email);
+        setFieldValue('password', '');
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, isSuccess]);
 
   return (
     <Modal

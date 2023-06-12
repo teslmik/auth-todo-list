@@ -1,8 +1,5 @@
 // Local storage keys
 export const STORAGE_KEYS = {
-  JWT_TOKEN_STUDENT: 'JWT_TOKEN_STUDENT',
-  JWT_TOKEN_INSTRUCTOR: 'JWT_TOKEN_INSTRUCTOR',
-  ADDRESS: 'ADDRESS',
   TOKEN: 'TOKEN'
 };
 
@@ -12,16 +9,20 @@ export const QUERY_KEYS = {
   TOKEN: 'TOKEN',
   TODOS: 'TODOS',
   TODO: 'TODO',
+  USER: 'USER',
   STATISTIC: 'statistic',
-  TRENDING: 'trending',
-  USER: 'user'
+  TRENDING: 'trending'
 };
 
 // Backend Routes
 export const BACKEND_KEYS = {
   API_VERSION: 'api',
   TODOS: 'todos',
-  USER: 'user'
+  USER: 'user',
+  EDIT: 'edit',
+  REGISTER: 'register',
+  RECOVERY: 'recovery',
+  LOGIN: 'login'
 };
 
 export const ROUTER_KEYS = {
@@ -30,5 +31,6 @@ export const ROUTER_KEYS = {
   HOME: 'home',
   TODOS: 'todos',
   AUTH: 'auth',
+  USER: 'user',
   NOT_FOUND: '*'
 };

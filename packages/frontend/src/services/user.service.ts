@@ -1,5 +1,5 @@
 import { APP_KEYS } from '../modules/common/consts';
-import { IUserLogin } from '../modules/common/types';
+import { IUpdateUser, IUser, IUserLogin } from '../modules/common/types';
 import HttpService from './http.service';
 
 class UserService extends HttpService {
@@ -8,35 +8,50 @@ class UserService extends HttpService {
     super();
   }
 
-  login(userData: IUserLogin): Promise<{ token: string }> {
-    return this.post(
+  login(userData: IUserLogin): Promise<string> {
+    return this.post({
+      url: `${APP_KEYS.BACKEND_KEYS.USER}/${APP_KEYS.BACKEND_KEYS.LOGIN}`,
+      data: userData,
+      recieveAuthHeader: true
+    });
+  }
+
+  registration(user: IUserLogin): Promise<string> {
+    return this.post({
+      url: `${APP_KEYS.BACKEND_KEYS.USER}/${APP_KEYS.BACKEND_KEYS.REGISTER}`,
+      data: user,
+      recieveAuthHeader: true
+    });
+  }
+
+  editProfile(userData: IUpdateUser): Promise<IUpdateUser> {
+    return this.put(
       {
-        url: `${APP_KEYS.BACKEND_KEYS.USER}`,
-        data: userData
+        url: `${APP_KEYS.BACKEND_KEYS.USER}/${APP_KEYS.BACKEND_KEYS.EDIT}`,
+        data: { ...userData }
       },
-      false
+      true
     );
   }
 
-  // registration(user: ITodoCreate): Promise<ITodo> {
-  //   return this.post(
-  //     {
-  //       url: APP_KEYS.BACKEND_KEYS.TODOS,
-  //       data: user
-  //     },
-  //     true
-  //   );
-  // }
+  recovery(email: string): Promise<string> {
+    return this.put(
+      {
+        url: `${APP_KEYS.BACKEND_KEYS.USER}/${APP_KEYS.BACKEND_KEYS.RECOVERY}`,
+        data: { email }
+      },
+      true
+    );
+  }
 
-  // editProfile(userData: ITodo): Promise<ITodo> {
-  //   return this.put(
-  //     {
-  //       url: `${APP_KEYS.BACKEND_KEYS.TODOS}/${userData.id}`,
-  //       data: { ...userData, id: undefined }
-  //     },
-  //     true
-  //   );
-  // }
+  getUser(): Promise<IUser> {
+    return this.get(
+      {
+        url: `${APP_KEYS.BACKEND_KEYS.USER}/me`
+      },
+      true
+    );
+  }
 }
 
 const userService = new UserService();

@@ -3,12 +3,12 @@ import userService from '../../../services/user.service';
 import { handleError } from '../../../utils/handle-error.util';
 import { IUserLogin } from '../types';
 
-export const useLoginUser = () => {
+export const useRegisterUser = () => {
   const handleOnSuccess = (data: string) => {
     localStorage.setItem('TOKEN', data);
   };
 
-  const handleMatationFn = (data: IUserLogin) => userService.login(data);
+  const handleMatationFn = (data: IUserLogin) => userService.registration(data);
 
   return useMutation({
     mutationFn: handleMatationFn,

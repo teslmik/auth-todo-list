@@ -14,10 +14,9 @@ export const MainRouter: React.FC = () => (
         <Route
           path={APP_KEYS.ROUTER_KEYS.NULL}
           element={
-            // <PrivateRoute>
-            // eslint-disable-next-line react/jsx-indent
-            <HomePageContainer />
-            // </PrivateRoute>
+            <PrivateRoute>
+              <HomePageContainer />
+            </PrivateRoute>
           }
         />
         <Route

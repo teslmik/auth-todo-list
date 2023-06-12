@@ -10,6 +10,11 @@ const TodoPageContainer: React.FC = () => {
   const { data, isLoading, isSuccess } = useGetOneTodo(id as string);
   const { mutate: editTodo, isLoading: updPending } = useEditTodo();
 
+  const [toggleSwitch, setToggleSwitch] = React.useState({
+    completed: data?.completed,
+    private: data?.private
+  });
+
   const handleOnClick = () => navigate('/');
   if (isLoading || !isSuccess) {
     return <Loader />;
@@ -20,8 +25,18 @@ const TodoPageContainer: React.FC = () => {
       id: data.id,
       title: data.title,
       description: data.description,
-      complited: !data.complited
+      completed: toggleSwitch.completed as boolean,
+      private: toggleSwitch.private as boolean
     });
+
+  const handleToggleComplete = () => {
+    setToggleSwitch((prev) => ({ completed: !prev.completed, private: prev.private }));
+    handleEditTodo();
+  };
+  const handleTogglePrivate = () => {
+    setToggleSwitch((prev) => ({ completed: prev.completed, private: !prev.private }));
+    handleEditTodo();
+  };
 
   return (
     <Box sx={{ height: '100%', mt: 1, display: 'flex', flexDirection: 'column' }}>
@@ -38,13 +53,21 @@ const TodoPageContainer: React.FC = () => {
         <Typography variant="h6" component="p">
           Complete:
         </Typography>
-        <Switch checked={data.complited} disabled={updPending} onChange={handleEditTodo} />
+        <Switch
+          checked={toggleSwitch.completed}
+          disabled={updPending}
+          onChange={handleToggleComplete}
+        />
       </Box>
       <Box sx={{ width: 288, display: 'flex', justifyContent: 'space-between', mb: 4, mt: 4 }}>
         <Typography variant="h6" component="p">
           Private:
         </Typography>
-        <Switch />
+        <Switch
+          checked={toggleSwitch.private}
+          disabled={updPending}
+          onChange={handleTogglePrivate}
+        />
       </Box>
       <Box>
         <Button variant="contained" sx={{ width: 288, mb: 5, mt: 4 }} onClick={handleOnClick}>

@@ -1,4 +1,13 @@
-import { Box, Button, Fade, Modal, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Fade,
+  FormControlLabel,
+  Modal,
+  Switch,
+  TextField,
+  Typography
+} from '@mui/material';
 import { useFormik } from 'formik';
 import React from 'react';
 import { useCreateTodos, useEditTodo } from '../../hooks';
@@ -12,12 +21,14 @@ interface Props {
 }
 
 export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
+  const [isPrivate, setIsPrivate] = React.useState(todo?.private ?? false);
   const { mutate: create } = useCreateTodos();
   const { mutate: editTodo } = useEditTodo();
 
   const handleOnSudmit = (data: ITodoCreate) => {
+    data.private = isPrivate;
     if (isOpen.edit && todo) {
-      editTodo({ id: todo.id, complited: todo.complited, ...data });
+      editTodo({ id: todo.id, completed: todo.completed, ...data });
     } else {
       create(data);
     }
@@ -27,22 +38,26 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
   const { values, handleChange, handleSubmit, setFieldValue } = useFormik({
     initialValues: {
       title: '',
-      description: ''
+      description: '',
+      private: false
     },
     onSubmit: handleOnSudmit
   });
 
   const handleOnClose = () => setIsOpen((prev) => ({ open: false, edit: prev.edit }));
+  const handleSwitchOnChange = () => setIsPrivate(!isPrivate);
 
   React.useEffect(() => {
     if (isOpen.edit && todo) {
       setFieldValue('title', todo.title);
       setFieldValue('description', todo.description);
+      setFieldValue('private', todo.private);
     } else {
       setFieldValue('title', '');
       setFieldValue('description', '');
+      setFieldValue('private', isPrivate);
     }
-  }, [isOpen]);
+  }, [isOpen, todo]);
 
   return (
     <Modal
@@ -79,6 +94,12 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
               multiline
               margin="normal"
               rows={5}
+            />
+            <FormControlLabel
+              name="private"
+              labelPlacement="start"
+              control={<Switch checked={isPrivate} onChange={handleSwitchOnChange} />}
+              label="Private"
             />
             <Button variant="contained" type="submit">
               {isOpen.edit ? 'Edit todo' : 'Create todo'}

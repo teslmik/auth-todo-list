@@ -1,12 +1,22 @@
-/* eslint-disable no-console */
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { TextField, Button, Typography, Link } from '@mui/material';
 import { StyledContainer, StyledForm } from './auth.styled';
 import { loginValidate, registerValidate } from '../common/validation';
 import { ProfileModal } from '../common/components/profile-modal';
+import { useLoginUser, useRegisterUser } from '../common/hooks';
+import { Loader } from '../common/components/loader';
 
 export const AuthPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { mutate: login, isLoading: loginLoading, isSuccess: loginSuccess } = useLoginUser();
+  const {
+    mutate: registration,
+    isLoading: registerLoading,
+    isSuccess: registerSuccess
+  } = useRegisterUser();
+
   const [isRegister, setIsRegister] = React.useState(false);
   const [modalIsOpen, setModalIsOpen] = React.useState<{
     open: boolean;
@@ -26,11 +36,11 @@ export const AuthPage: React.FC = () => {
     },
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ) => {
-    const loginValue = { email: values.email, password: values.password };
+    const formValues = { email: values.email, password: values.password };
     if (isRegister) {
-      console.log(values);
+      registration(formValues);
     } else {
-      console.log(loginValue);
+      login(formValues);
     }
 
     setSubmitting(false);
@@ -46,6 +56,16 @@ export const AuthPage: React.FC = () => {
     validate: isRegister ? registerValidate : loginValidate,
     onSubmit: handleFormSubmit
   });
+
+  React.useEffect(() => {
+    if (loginSuccess || registerSuccess) {
+      navigate('/');
+    }
+  }, [loginSuccess, registerSuccess, navigate]);
+
+  if (loginLoading || registerLoading) {
+    return <Loader />;
+  }
 
   return (
     <StyledContainer sx={{ display: 'flex' }}>
