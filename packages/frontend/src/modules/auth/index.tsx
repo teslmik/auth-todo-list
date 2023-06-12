@@ -1,14 +1,22 @@
 /* eslint-disable no-console */
-import React, { useState } from 'react';
+import React from 'react';
 import { useFormik } from 'formik';
 import { TextField, Button, Typography, Link } from '@mui/material';
 import { StyledContainer, StyledForm } from './auth.styled';
 import { loginValidate, registerValidate } from '../common/validation';
+import { ProfileModal } from '../common/components/profile-modal';
 
 export const AuthPage: React.FC = () => {
-  const [isRegister, setIsRegister] = useState(false);
+  const [isRegister, setIsRegister] = React.useState(false);
+  const [modalIsOpen, setModalIsOpen] = React.useState<{
+    open: boolean;
+    recovery?: boolean;
+  }>({ open: false, recovery: false });
 
   const handleToogleAuth = () => setIsRegister(!isRegister);
+  const handleRecovery = () => {
+    setModalIsOpen({ open: true, recovery: true });
+  };
 
   const handleFormSubmit = (
     values: {
@@ -28,7 +36,7 @@ export const AuthPage: React.FC = () => {
     setSubmitting(false);
   };
 
-  const { values, handleChange, errors, handleSubmit, isValid } = useFormik({
+  const { values, handleChange, errors, handleSubmit, isValid, touched } = useFormik({
     initialValues: {
       email: '',
       password: '',
@@ -44,7 +52,7 @@ export const AuthPage: React.FC = () => {
       <Typography variant="h5">{isRegister ? 'Registration' : 'Login'}</Typography>
       <StyledForm onSubmit={handleSubmit}>
         <TextField
-          error={!!errors.email}
+          error={!!errors.email && !touched.email}
           helperText={errors.email}
           fullWidth
           id="email"
@@ -55,7 +63,7 @@ export const AuthPage: React.FC = () => {
           onChange={handleChange}
         />
         <TextField
-          error={!!errors.password}
+          error={!!errors.password && !touched.password}
           helperText={errors.password}
           fullWidth
           id="password"
@@ -68,7 +76,7 @@ export const AuthPage: React.FC = () => {
         />
         {isRegister ? (
           <TextField
-            error={!!errors.confirmPassword}
+            error={!!errors.confirmPassword && !touched.confirmPassword}
             helperText={errors.confirmPassword}
             fullWidth
             id="confirmPassword"
@@ -81,7 +89,9 @@ export const AuthPage: React.FC = () => {
           />
         ) : (
           <Typography variant="body2" align="right" marginTop="-20px">
-            <Link sx={{ cursor: 'pointer' }}>Forgot password?</Link>
+            <Link sx={{ cursor: 'pointer' }} onClick={handleRecovery}>
+              Forgot password?
+            </Link>
           </Typography>
         )}
         <Button fullWidth variant="contained" color="primary" type="submit" disabled={!isValid}>
@@ -94,6 +104,7 @@ export const AuthPage: React.FC = () => {
           </Link>
         </Typography>
       </StyledForm>
+      <ProfileModal isOpen={modalIsOpen} setIsOpen={setModalIsOpen} />
     </StyledContainer>
   );
 };

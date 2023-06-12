@@ -1,7 +1,6 @@
 import { Box, Button, Fade, Modal, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import React from 'react';
-import { MyGlobalContext } from '../../hooks';
 import { profileValidate } from '../../validation';
 import { profileModalStyled } from './profile-modal.styled';
 
@@ -11,29 +10,33 @@ interface Props {
 }
 
 export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
-  const { isRecovery } = React.useContext(MyGlobalContext);
-
   const handleOnSudmit = (data: { newPassword: string; email: string; password: string }) => {
     // eslint-disable-next-line no-console
     console.log('data: ', data);
     setIsOpen({ open: false });
   };
 
-  const { values, handleChange, handleSubmit, setFieldValue, errors, isValid } = useFormik({
-    initialValues: {
-      email: '',
-      password: '',
-      newPassword: ''
-    },
-    validate: profileValidate,
-    onSubmit: handleOnSudmit
-  });
+  const { values, handleChange, handleSubmit, setFieldValue, errors, isValid, touched } = useFormik(
+    {
+      initialValues: {
+        email: '',
+        password: '',
+        newPassword: ''
+      },
+      validate: profileValidate,
+      onSubmit: handleOnSudmit
+    }
+  );
 
-  const handleOnClose = () => setIsOpen((prev) => ({ open: false, edit: prev.recovery }));
+  const handleOnClose = () => setIsOpen((prev) => ({ open: false, recovery: prev.recovery }));
 
   React.useEffect(() => {
-    setFieldValue('email', 'teslmik@gmail.com');
-    setFieldValue('password', '');
+    if (isOpen.recovery) {
+      setFieldValue('email', '');
+    } else {
+      setFieldValue('email', 'teslmik@gmail.com');
+      setFieldValue('password', '');
+    }
   }, [isOpen]);
 
   return (
@@ -51,7 +54,7 @@ export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
           </Typography>
           <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '16px' }}>
             <TextField
-              error={!!errors.email}
+              error={!!errors.email && !touched.email}
               helperText={errors.email}
               fullWidth
               id="email"
@@ -61,10 +64,10 @@ export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
               value={values.email}
               onChange={handleChange}
             />
-            {!isRecovery && (
+            {!isOpen.recovery && (
               <>
                 <TextField
-                  error={!!errors.password}
+                  error={!!errors.password && !touched.password}
                   helperText={errors.password}
                   fullWidth
                   id="password"
@@ -76,7 +79,7 @@ export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                   onChange={handleChange}
                 />
                 <TextField
-                  error={!!errors.newPassword}
+                  error={!!errors.newPassword && !touched.newPassword}
                   helperText={errors.newPassword}
                   fullWidth
                   id="newPassword"

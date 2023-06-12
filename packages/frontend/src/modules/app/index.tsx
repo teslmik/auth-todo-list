@@ -26,15 +26,11 @@ const AppContainer: React.FC = () => {
     open: false,
     edit: undefined
   });
-  const [isRecovery, setIsRecovery] = React.useState(false);
-
   return (
     <ThemeProvider theme={theme}>
       <Styled.GlobalStyles />
       <QueryClientProvider client={queryClient}>
-        <MyGlobalContext.Provider
-          value={React.useMemo(() => ({ isOpen, setIsOpen, isRecovery, setIsRecovery }), [isOpen])}
-        >
+        <MyGlobalContext.Provider value={React.useMemo(() => ({ isOpen, setIsOpen }), [isOpen])}>
           <MainRouter />
           <ReactQueryDevtools initialIsOpen={false} />
         </MyGlobalContext.Provider>
