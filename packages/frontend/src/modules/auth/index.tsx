@@ -28,7 +28,7 @@ export const AuthPage: React.FC = () => {
     setSubmitting(false);
   };
 
-  const formik = useFormik({
+  const { values, handleChange, errors, handleSubmit, isValid } = useFormik({
     initialValues: {
       email: '',
       password: '',
@@ -42,55 +42,49 @@ export const AuthPage: React.FC = () => {
   return (
     <StyledContainer sx={{ display: 'flex' }}>
       <Typography variant="h5">{isRegister ? 'Registration' : 'Login'}</Typography>
-      <StyledForm onSubmit={formik.handleSubmit}>
+      <StyledForm onSubmit={handleSubmit}>
         <TextField
-          error={!!formik.errors.email}
-          helperText={formik.errors.email}
+          error={!!errors.email}
+          helperText={errors.email}
           fullWidth
           id="email"
           name="email"
           label="Email"
           placeholder="Enter your email"
-          value={formik.values.email}
-          onChange={formik.handleChange}
+          value={values.email}
+          onChange={handleChange}
         />
         <TextField
-          error={!!formik.errors.password}
-          helperText={formik.errors.password}
+          error={!!errors.password}
+          helperText={errors.password}
           fullWidth
           id="password"
           name="password"
           label="Password"
           type="password"
           placeholder="Enter your password"
-          value={formik.values.password}
-          onChange={formik.handleChange}
+          value={values.password}
+          onChange={handleChange}
         />
         {isRegister ? (
           <TextField
-            error={!!formik.errors.confirmPassword}
-            helperText={formik.errors.confirmPassword}
+            error={!!errors.confirmPassword}
+            helperText={errors.confirmPassword}
             fullWidth
             id="confirmPassword"
             name="confirmPassword"
             label="Confirm Password"
             type="password"
             placeholder="Confirm your password"
-            value={formik.values.confirmPassword}
-            onChange={formik.handleChange}
+            value={values.confirmPassword}
+            onChange={handleChange}
           />
         ) : (
           <Typography variant="body2" align="right" marginTop="-20px">
             <Link sx={{ cursor: 'pointer' }}>Forgot password?</Link>
           </Typography>
         )}
-        <Button
-          fullWidth
-          variant="contained"
-          color="primary"
-          type="submit"
-          disabled={!formik.isValid}
-        >
+        <Button fullWidth variant="contained" color="primary" type="submit" disabled={!isValid}>
           {isRegister ? 'Registration' : 'Login'}
         </Button>
         <Typography variant="body2">
