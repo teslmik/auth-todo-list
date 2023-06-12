@@ -13,7 +13,8 @@ export const QUERY_KEYS = {
   TODOS: 'TODOS',
   TODO: 'TODO',
   STATISTIC: 'statistic',
-  TRENDING: 'trending'
+  TRENDING: 'trending',
+  USER: 'user'
 };
 
 // Backend Routes
