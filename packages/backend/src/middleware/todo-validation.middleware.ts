@@ -1,14 +1,19 @@
 import joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
 
-import { StatusCode } from '../enums/enums';
-import { Todo } from '../entities/entities';
+import { StatusCode } from '../enums';
+import { Todo } from '../entities';
 
 const todoValidation = {
   create: (req: Request, res: Response, next: NextFunction) => {
     const schema: joi.ObjectSchema<Todo> = joi.object({
-      title: joi.string().min(1).required(),
-      description: joi.string().min(1).required()
+      title: joi.string().required().messages({
+        'string.empty': 'Title is required'
+      }),
+      description: joi.string().required().messages({
+        'string.empty': 'Description is required'
+      }),
+      private: joi.boolean().required()
     });
 
     const { error } = schema.validate(req.body);
@@ -23,9 +28,14 @@ const todoValidation = {
 
   update: (req: Request, res: Response, next: NextFunction) => {
     const schema: joi.ObjectSchema<Todo> = joi.object({
-      title: joi.string().min(1).trim().required(),
-      description: joi.string().min(1).trim().required(),
-      complited: joi.boolean().required()
+      title: joi.string().trim().required().messages({
+        'string.empty': 'Title is required'
+      }),
+      description: joi.string().trim().required().messages({
+        'string.empty': 'Description is required'
+      }),
+      completed: joi.boolean().required(),
+      private: joi.boolean().required()
     });
 
     const { error } = schema.validate(req.body);

@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { User } from '.';
 
 @Entity()
 export class Todo extends BaseEntity {
@@ -12,7 +13,10 @@ export class Todo extends BaseEntity {
   description: string;
 
   @Column({ default: false })
-  complited: boolean;
+  completed: boolean;
+
+  @Column()
+  private: boolean;
 
   @Column({
     type: 'timestamp',
@@ -25,4 +29,9 @@ export class Todo extends BaseEntity {
     default: () => 'NOW()'
   })
   updatedAt: Date;
+
+  @ManyToOne(() => User, (user) => user.todos, {
+    onDelete: 'CASCADE'
+  })
+  user: User;
 }
