@@ -6,11 +6,16 @@ const tryCatchMiddleware =
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       await handler(req, res, next);
-    } catch (error: any) {
-      res
-        .status(StatusCode.INTERNAL_SERVER_ERROR)
-        .json({ message: error.message ? error.message : String(error) });
-      next(error);
+    } catch (error) {
+      if (error instanceof Error) {
+        res
+          .status(StatusCode.INTERNAL_SERVER_ERROR)
+          .json({ message: error.message ? error?.message : String(error) });
+        next(error);
+      } else {
+        res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ message: String(error) });
+        next(error);
+      }
     }
   };
 
