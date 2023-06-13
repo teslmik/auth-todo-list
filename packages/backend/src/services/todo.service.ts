@@ -1,7 +1,7 @@
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { appDataSource } from '../config/app-data-source';
-import { ITodoRequestDto, IUpdateTodoRequestDto } from '../types';
+import { ISearchParams, ITodoRequestDto, IUpdateTodoRequestDto } from '../types';
 import { Todo, User } from '../entities';
 
 export default class TodoService {
@@ -11,12 +11,27 @@ export default class TodoService {
     this.todoRepository = appDataSource.getRepository(Todo);
   }
 
-  async findAll(currentUser: User) {
-    const todos = await this.todoRepository.find({
-      where: [{ user: { id: currentUser.id } }, { private: false, user: Not(currentUser.id) }],
-      order: { createdAt: 'DESC' },
-      relations: ['user']
-    });
+  async findAll(currentUser: User, searchParams: ISearchParams) {
+    const { search, status } = searchParams;
+
+    const query = this.todoRepository
+      .createQueryBuilder('todo')
+      .leftJoinAndSelect('todo.user', 'user')
+      .where('(todo.user.id = :userId OR (todo.private = false AND todo.user.id != :userId))')
+      .andWhere('(todo.title LIKE :search OR todo.description LIKE :search)', {
+        userId: currentUser.id,
+        search: `%${search || ''}%`
+      });
+
+    if (status === 'public') {
+      query.andWhere('todo.private = :isPrivateFalse', { isPrivateFalse: false });
+    } else if (status === 'privat') {
+      query.andWhere('todo.private = :isPrivateTrue', { isPrivateTrue: true });
+    } else if (status === 'completed') {
+      query.andWhere('todo.completed = :completed', { completed: true });
+    }
+
+    const todos = await query.orderBy('todo.createdAt', 'DESC').getMany();
 
     const result = todos.map((todo) => {
       const { user, ...restTodo } = todo;

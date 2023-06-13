@@ -2,12 +2,13 @@ import { Response, Request, NextFunction } from 'express';
 import { StatusCode } from '../enums/status-code.enum';
 import { User } from '../entities';
 import TodoService from '../services/todo.service';
+import { ISearchParams } from '../types';
 
 export class TodoController {
   constructor(private todoService: TodoService) {}
 
   async getAllTodo(req: Request, res: Response) {
-    const todos = await this.todoService.findAll(req.user as User);
+    const todos = await this.todoService.findAll(req.user as User, req.query as ISearchParams);
 
     res.json(todos);
   }

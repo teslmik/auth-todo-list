@@ -5,3 +5,4 @@ export { IUpdateTodoRequestDto } from './todo-update-request-dto.type';
 export { EmailProperties } from './email-properties.type';
 export { IUserUpdateDto } from './user-update-request-dto.type';
 export { IEditedUserData } from './edited-user-data.type';
+export { ISearchParams } from './search-params-type';
