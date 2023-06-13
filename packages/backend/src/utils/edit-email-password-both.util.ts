@@ -8,8 +8,9 @@ import { mailService } from '../services/mail.service';
 export const editEmailPasswordBoth = async (payload: IUserUpdateDto): Promise<IEditedUserData> => {
   const userService = new UserService();
   const { token, ...restPayload } = payload;
-  const { id } = tokenService.validateToken(token) as { id: string };
-  const user = await userService.findUserById(id);
+  const userId = tokenService.validateToken(token);
+
+  const user = await userService.findUserById(userId);
 
   if (!user) {
     throw new Error('Unauthorized');
@@ -24,7 +25,7 @@ export const editEmailPasswordBoth = async (payload: IUserUpdateDto): Promise<IE
     activationLink?: string;
   } = {
     ...restPayload,
-    id
+    id: user.id
   };
 
   if (payload.email) {

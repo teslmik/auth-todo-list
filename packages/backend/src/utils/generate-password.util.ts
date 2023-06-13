@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import generatePassword from 'generate-password';
 
 export const generateRandomPassword = (length: number) => {
@@ -6,6 +5,7 @@ export const generateRandomPassword = (length: number) => {
     length,
     numbers: true,
     symbols: true,
+    exclude: '()-_=+[]{}|<,>.?/`~:;',
     uppercase: true,
     lowercase: true,
     strict: true

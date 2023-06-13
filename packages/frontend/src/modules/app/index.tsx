@@ -26,7 +26,6 @@ const AppContainer: React.FC = () => {
     open: false,
     edit: undefined
   });
-
   return (
     <ThemeProvider theme={theme}>
       <Styled.GlobalStyles />

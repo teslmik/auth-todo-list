@@ -18,7 +18,9 @@ export const TableActionsCell: React.FC<Props> = ({ row, handleOpen }) => {
 
   const buttonActionHandlers = [
     () => navigate(`${APP_KEYS.ROUTER_KEYS.TODOS}/${row.id}`),
-    () => handleOpen(row.id),
+    () => {
+      handleOpen(row.id);
+    },
     () => deleteTodo(row.id)
   ];
 
@@ -27,7 +29,8 @@ export const TableActionsCell: React.FC<Props> = ({ row, handleOpen }) => {
       id: row.id,
       title: row.title,
       description: row.description,
-      complited: !row.complited
+      completed: !row.completed,
+      private: row.private
     });
 
   return (
@@ -45,7 +48,7 @@ export const TableActionsCell: React.FC<Props> = ({ row, handleOpen }) => {
           </Button>
         ))}
       </ButtonGroup>
-      <Switch checked={row.complited} disabled={updPending} onChange={handleEditTodo} />
+      <Switch checked={row.completed} disabled={updPending} onChange={handleEditTodo} />
     </Box>
   );
 };
