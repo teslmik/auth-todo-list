@@ -33,7 +33,7 @@ export default class TodoService {
 
     query
       .orderBy('todo.createdAt', 'DESC')
-      .skip((page - 1) * pageSize)
+      .skip((page || 0) * pageSize)
       .take(pageSize);
 
     const todos = await query.getMany();
@@ -50,15 +50,6 @@ export default class TodoService {
       pageSize,
       data: result
     };
-
-    // const todos = await query.orderBy('todo.createdAt', 'DESC').getMany();
-
-    // const result = todos.map((todo) => {
-    //   const { user, ...restTodo } = todo;
-    //   return { ...restTodo, userId: user.id };
-    // });
-
-    // return result;
   }
 
   async findOneById(id: string, authUser: User) {

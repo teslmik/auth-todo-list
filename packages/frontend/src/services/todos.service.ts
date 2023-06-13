@@ -1,5 +1,5 @@
 import { APP_KEYS } from '../modules/common/consts';
-import { ITodoQueries, ITodo, ITodoCreate } from '../modules/common/types';
+import { ITodoQueries, IAllTodosData, ITodoCreate, ITodo } from '../modules/common/types';
 import HttpService from './http.service';
 
 class TodoService extends HttpService {
@@ -8,7 +8,7 @@ class TodoService extends HttpService {
     super();
   }
 
-  getAllTodos({ search, status }: ITodoQueries): Promise<ITodo[]> {
+  getAllTodos({ search, status, page, pageSize }: ITodoQueries): Promise<IAllTodosData> {
     const queryParams: string[] = [];
 
     if (status !== 'all') {
@@ -16,6 +16,12 @@ class TodoService extends HttpService {
     }
     if (search) {
       queryParams.push(`search=${encodeURIComponent(search)}`);
+    }
+    if (page) {
+      queryParams.push(`page=${encodeURIComponent(page)}`);
+    }
+    if (pageSize) {
+      queryParams.push(`pageSize=${encodeURIComponent(pageSize)}`);
     }
 
     const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';

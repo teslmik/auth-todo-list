@@ -9,9 +9,9 @@ export class TodoController {
 
   async getAllTodo(req: Request, res: Response) {
     const currentUser = req.user as User;
-    const searchParams = req.query as unknown as ISearchParams;
+    const queryParams = req.query as unknown as ISearchParams;
 
-    const todos = await this.todoService.findAll(currentUser, searchParams);
+    const todos = await this.todoService.findAll(currentUser, queryParams);
 
     res.json(todos);
   }

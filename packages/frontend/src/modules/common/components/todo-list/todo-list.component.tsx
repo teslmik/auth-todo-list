@@ -15,29 +15,48 @@ interface Props {
 
 export const TodoList: React.FC<Props> = ({ status, search }) => {
   const debounce = useDebounce(search);
-  const { data: todos, isLoading } = useGetAllTodos({ status, search: debounce });
-  const { isOpen, setIsOpen } = useGlobalContext();
+
+  const [page, setPage] = React.useState(0);
+  const [pageSize, setPageSize] = React.useState(5);
   const [currentTodo, setCurrentTodo] = React.useState<ITodo | null>(null);
 
+  const { isOpen, setIsOpen } = useGlobalContext();
+
+  const { data: todosData, isLoading } = useGetAllTodos({
+    status,
+    search: debounce,
+    page,
+    pageSize
+  });
+
+  if (isLoading || !todosData) {
+    return <Loader />;
+  }
+
   const handleOpen = (id: string) => {
-    const findTodo = todos?.filter((todo) => todo.id === id)[0];
+    const findTodo = todosData.data.filter((todo) => todo.id === id)[0];
     if (findTodo) {
       setCurrentTodo(findTodo);
     }
     setIsOpen({ open: true, edit: true });
   };
 
-  if (isLoading || !todos) {
-    return <Loader />;
-  }
+  const todoListProps = {
+    todos: todosData,
+    handleOpen,
+    page,
+    setPage,
+    pageSize,
+    setPageSize
+  };
 
   return (
     <>
-      {todos?.length > 0 ? (
+      {todosData.data.length > 0 ? (
         <>
-          <TodoTable todos={todos} handleOpen={handleOpen} />
-          <TodoSlider todos={todos} handleOpen={handleOpen} />
-          <TodoCards todos={todos} handleOpen={handleOpen} />
+          <TodoTable {...todoListProps} />
+          <TodoSlider {...todoListProps} />
+          <TodoCards {...todoListProps} />
         </>
       ) : (
         <EmptyData message={"You don't have any todos yet"} />

@@ -9,7 +9,7 @@ export const useGetAllTodos = (queries: ITodoQueries) => {
 
   return useQuery({
     queryFn: handleQueryFn,
-    queryKey: [APP_KEYS.QUERY_KEYS.TODOS, queries.status, queries.search],
+    queryKey: [APP_KEYS.QUERY_KEYS.TODOS, queries],
     onError: handleError
   });
 };

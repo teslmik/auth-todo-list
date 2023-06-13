@@ -10,11 +10,7 @@ interface Props {
 }
 
 export const TodoButtonGroup: React.FC<Props> = ({ buttonLabel, setButtonLabel }) => {
-  const handleActive = (value: ButtonType) => {
-    setButtonLabel(value);
-  };
-
-  const handleClick = (buttonValue: ButtonType) => () => handleActive(buttonValue);
+  const handleClick = (buttonValue: ButtonType) => () => setButtonLabel(buttonValue);
 
   return (
     <ButtonGroup variant="contained" aria-label="outlined primary button group">
