@@ -11,9 +11,7 @@ export default class TodoService {
     this.todoRepository = appDataSource.getRepository(Todo);
   }
 
-  async findAll(currentUser: User, searchParams: ISearchParams) {
-    const { search, status } = searchParams;
-
+  async findAll(currentUser: User, { search, status }: ISearchParams) {
     const query = this.todoRepository
       .createQueryBuilder('todo')
       .leftJoinAndSelect('todo.user', 'user')
@@ -25,7 +23,7 @@ export default class TodoService {
 
     if (status === 'public') {
       query.andWhere('todo.private = :isPrivateFalse', { isPrivateFalse: false });
-    } else if (status === 'privat') {
+    } else if (status === 'private') {
       query.andWhere('todo.private = :isPrivateTrue', { isPrivateTrue: true });
     } else if (status === 'completed') {
       query.andWhere('todo.completed = :completed', { completed: true });

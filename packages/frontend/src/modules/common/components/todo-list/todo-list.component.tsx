@@ -1,6 +1,6 @@
 import React from 'react';
-import { useGetAllTodos, useGlobalContext } from '../../hooks';
-import { ITodo } from '../../types';
+import { useDebounce, useGetAllTodos, useGlobalContext } from '../../hooks';
+import { ITodo, ButtonType } from '../../types';
 import { EditModal } from '../edit-modal';
 import { EmptyData } from '../empti-data-placeholder/empty-data.component';
 import { Loader } from '../loader';
@@ -8,8 +8,14 @@ import { TodoCards } from './todo-cards/todo-cards';
 import { TodoSlider } from './todo-slider/todo-slider.component';
 import { TodoTable } from './todo-table/todo-table.component';
 
-export const TodoList: React.FC = () => {
-  const { data: todos, isLoading } = useGetAllTodos();
+interface Props {
+  status: ButtonType;
+  search: string;
+}
+
+export const TodoList: React.FC<Props> = ({ status, search }) => {
+  const debounce = useDebounce(search);
+  const { data: todos, isLoading } = useGetAllTodos({ status, search: debounce });
   const { isOpen, setIsOpen } = useGlobalContext();
   const [currentTodo, setCurrentTodo] = React.useState<ITodo | null>(null);
 

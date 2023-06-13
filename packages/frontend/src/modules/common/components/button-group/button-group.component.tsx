@@ -4,9 +4,12 @@ import { COLORS } from '../../../theme';
 import { buttonGroupData } from '../../consts';
 import { ButtonType } from '../../types';
 
-export const TodoButtonGroup: React.FC = () => {
-  const [buttonLabel, setButtonLabel] = React.useState<ButtonType>('all');
+interface Props {
+  buttonLabel: ButtonType;
+  setButtonLabel: React.Dispatch<React.SetStateAction<ButtonType>>;
+}
 
+export const TodoButtonGroup: React.FC<Props> = ({ buttonLabel, setButtonLabel }) => {
   const handleActive = (value: ButtonType) => {
     setButtonLabel(value);
   };

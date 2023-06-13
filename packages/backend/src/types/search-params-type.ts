@@ -1,4 +1,4 @@
 export interface ISearchParams {
   search?: string;
-  status?: 'public' | 'privat' | 'completed';
+  status?: 'public' | 'private' | 'completed';
 }
