@@ -4,9 +4,6 @@ import userController from '../../controllers/user.controller';
 
 const router: Router = Router();
 
-// @route   POST api/user
-// @desc    Register user given their email and password, returns the token upon successful registration
-// @access  Public
 router.get('', checkAuth, tryCatchMiddleware(userController.getAllUsers.bind(userController)));
 router.get(
   '/me',

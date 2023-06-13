@@ -9,10 +9,11 @@ class TokenService {
   }
 
   validateToken(token: string) {
+    const splitToken = token.replace('Bearer ', '');
     try {
-      const userData = jwt.verify(token.split(' ')[0], process.env.JWT_SECRET) as { id: string };
+      const userData = jwt.verify(splitToken, process.env.JWT_SECRET) as { id: string };
 
-      return userData;
+      return userData.id;
     } catch (error) {
       return String(error);
     }

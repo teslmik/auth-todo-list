@@ -17,8 +17,7 @@ export default class UserService {
   }
 
   async getHashPassword(password: string) {
-    const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(password, salt);
+    const hashPassword = await bcrypt.hash(password, 10);
     return hashPassword;
   }
 
@@ -47,6 +46,7 @@ export default class UserService {
 
   async signIn(email: string, password: string): Promise<string> {
     const user = await this.findUserByEmail(email);
+
     if (!user) {
       throw new Error('Invalid email or password');
     }

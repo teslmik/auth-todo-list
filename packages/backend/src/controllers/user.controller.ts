@@ -51,9 +51,7 @@ export class UserController {
   }
 
   async getOneUserById(req: Request, res: Response) {
-    const { id } = tokenService.validateToken(req.headers.authorization as string) as {
-      id: string;
-    };
+    const id = tokenService.validateToken(req.headers.authorization as string);
 
     const user = await this.userService.findUserById(id);
     res.json(user);
