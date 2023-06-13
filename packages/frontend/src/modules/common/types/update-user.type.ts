@@ -1,5 +1,5 @@
 export interface IUpdateUser {
-  email: string;
+  email?: string;
   password?: string;
   newPassword?: string;
 }

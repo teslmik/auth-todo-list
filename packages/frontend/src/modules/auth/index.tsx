@@ -7,6 +7,7 @@ import { loginValidate, registerValidate } from '../common/validation';
 import { ProfileModal } from '../common/components/profile-modal';
 import { useLoginUser, useRegisterUser } from '../common/hooks';
 import { Loader } from '../common/components/loader';
+import { APP_KEYS } from '../common/consts';
 
 export const AuthPage: React.FC = () => {
   const navigate = useNavigate();
@@ -59,11 +60,11 @@ export const AuthPage: React.FC = () => {
 
   React.useEffect(() => {
     if (loginSuccess || registerSuccess) {
-      navigate('/');
+      navigate(APP_KEYS.ROUTER_KEYS.ROOT);
     }
   }, [loginSuccess, registerSuccess, navigate]);
 
-  if (loginLoading || registerLoading) {
+  if (loginLoading || registerLoading || loginSuccess || registerSuccess) {
     return <Loader />;
   }
 

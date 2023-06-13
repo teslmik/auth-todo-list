@@ -32,10 +32,11 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
     } else {
       create(data);
     }
+    setIsPrivate(false);
     setIsOpen({ open: false });
   };
 
-  const { values, handleChange, handleSubmit, setFieldValue } = useFormik({
+  const { values, handleChange, handleSubmit, setFieldValue, resetForm } = useFormik({
     initialValues: {
       title: '',
       description: '',
@@ -44,19 +45,18 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
     onSubmit: handleOnSudmit
   });
 
-  const handleOnClose = () => setIsOpen((prev) => ({ open: false, edit: prev.edit }));
+  const handleOnClose = () => {
+    setIsOpen((prev) => ({ open: false, edit: prev.edit }));
+    setIsPrivate(false);
+    resetForm();
+  };
   const handleSwitchOnChange = () => setIsPrivate(!isPrivate);
 
   React.useEffect(() => {
-    if (isOpen.edit && todo) {
-      setFieldValue('title', todo.title);
-      setFieldValue('description', todo.description);
-      setFieldValue('private', todo.private);
-    } else {
-      setFieldValue('title', '');
-      setFieldValue('description', '');
-      setFieldValue('private', isPrivate);
-    }
+    setIsPrivate(todo ? todo.private : isPrivate);
+    setFieldValue('title', isOpen.edit && todo ? todo.title : '');
+    setFieldValue('description', isOpen.edit && todo ? todo.description : '');
+    setFieldValue('private', isOpen.edit && todo ? todo.private : isPrivate);
   }, [isOpen, todo]);
 
   return (

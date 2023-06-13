@@ -11,12 +11,11 @@ export const profileValidate = (values: {
 }) => {
   const errors: ProfileErrors = {};
 
-  if (!values.email) {
-    errors.email = 'Email is required';
-  } else if (
+  if (
     !/^(([^<>()[\]\\.,;:\s@\\"]+(\.[^<>()[\]\\.,;:\s@\\"]+)*)|(\\".+\\"))@(([^<>()[\]\\.,;:\s@\\"]+\.)+[^<>()[\]\\.,;:\s@\\"]{2,})$/i.test(
       values.email
-    )
+    ) &&
+    values.email
   ) {
     errors.email = 'Invalid email address';
   }

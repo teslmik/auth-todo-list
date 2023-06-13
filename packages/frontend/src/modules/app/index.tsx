@@ -12,7 +12,7 @@ import { MyGlobalContext } from '../common/hooks';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      keepPreviousData: false,
+      keepPreviousData: true,
       refetchOnMount: 'always',
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,

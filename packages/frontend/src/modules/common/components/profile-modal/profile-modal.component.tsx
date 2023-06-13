@@ -4,6 +4,7 @@ import React from 'react';
 import { useGetUser, useEditUser, useRecoveryPassword } from '../../hooks';
 import { IUpdateUser } from '../../types';
 import { profileValidate } from '../../validation';
+import { Loader } from '../loader';
 import { profileModalStyled } from './profile-modal.styled';
 
 interface Props {
@@ -12,15 +13,27 @@ interface Props {
 }
 
 export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
-  const { data: userData, isSuccess } = useGetUser();
+  const {
+    data: userData,
+    isSuccess,
+    refetch
+  } = useGetUser(isOpen.open ? !isOpen.recovery : isOpen.open);
   const { mutate: editUser } = useEditUser();
-  const { mutate: recovery } = useRecoveryPassword();
+  const { mutate: recovery, isLoading } = useRecoveryPassword();
 
   const handleOnSudmit = (data: IUpdateUser) => {
     if (isOpen.recovery) {
-      recovery(data.email);
+      recovery(data?.email as string);
     } else if (!data.password && !data.newPassword) {
-      editUser({ email: data.email });
+      if (data.email && data.email !== userData?.email) {
+        editUser({ email: data.email });
+      }
+    } else if (!data.email) {
+      editUser({
+        email: userData?.email,
+        password: data?.password,
+        newPassword: data?.newPassword
+      });
     } else editUser(data);
 
     setIsOpen({ open: false });
@@ -47,7 +60,8 @@ export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       if (isOpen.recovery) {
         setFieldValue('email', '');
       } else {
-        setFieldValue('email', userData?.email);
+        refetch();
+        setFieldValue('email', userData.email);
         setFieldValue('password', '');
       }
     }
@@ -67,48 +81,58 @@ export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
             {isOpen.recovery ? 'Recovery password' : 'Edit Profile'}
           </Typography>
           <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '16px' }}>
-            <TextField
-              error={!!errors.email && !touched.email}
-              helperText={errors.email}
-              fullWidth
-              id="email"
-              name="email"
-              label="Email"
-              placeholder="Enter your email"
-              value={values.email}
-              onChange={handleChange}
-            />
-            {!isOpen.recovery && (
+            {isLoading ? (
+              <Loader />
+            ) : (
               <>
                 <TextField
-                  error={!!errors.password && !touched.password}
-                  helperText={errors.password}
+                  error={!!errors.email && !touched.email}
+                  helperText={errors.email}
                   fullWidth
-                  id="password"
-                  name="password"
-                  label="Password"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={values.password}
+                  id="email"
+                  name="email"
+                  label="Email"
+                  placeholder="Enter your email"
+                  value={values.email}
                   onChange={handleChange}
                 />
-                <TextField
-                  error={!!errors.newPassword && !touched.newPassword}
-                  helperText={errors.newPassword}
-                  fullWidth
-                  id="newPassword"
-                  name="newPassword"
-                  label="New Password"
-                  type="password"
-                  placeholder="Your new password"
-                  value={values.newPassword}
-                  onChange={handleChange}
-                />
+                {!isOpen.recovery && (
+                  <>
+                    <TextField
+                      error={!!errors.password && !touched.password}
+                      helperText={errors.password}
+                      fullWidth
+                      id="password"
+                      name="password"
+                      label="Password"
+                      type="password"
+                      placeholder="Enter your password"
+                      value={values.password}
+                      onChange={handleChange}
+                    />
+                    <TextField
+                      error={!!errors.newPassword && !touched.newPassword}
+                      helperText={errors.newPassword}
+                      fullWidth
+                      id="newPassword"
+                      name="newPassword"
+                      label="New Password"
+                      type="password"
+                      placeholder="Your new password"
+                      value={values.newPassword}
+                      onChange={handleChange}
+                    />
+                  </>
+                )}
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={!isValid || (!values.email && !values.newPassword && !values.password)}
+                >
+                  {isOpen.recovery ? 'Recovery password' : 'Edit Profile'}
+                </Button>
               </>
             )}
-            <Button variant="contained" type="submit" disabled={!isValid}>
-              {isOpen.recovery ? 'Recovery password' : 'Edit Profile'}
-            </Button>
           </div>
         </Box>
       </Fade>

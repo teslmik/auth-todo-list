@@ -3,58 +3,63 @@ import { useParams, useNavigate } from 'react-router-dom';
 import React from 'react';
 import { useEditTodo, useGetOneTodo } from '../common/hooks';
 import { Loader } from '../common/components/loader';
+import { APP_KEYS } from '../common/consts';
 
 const TodoPageContainer: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { data, isLoading, isSuccess } = useGetOneTodo(id as string);
+  const { data, isLoading, isSuccess, isError } = useGetOneTodo(id as string);
   const { mutate: editTodo, isLoading: updPending } = useEditTodo();
 
-  const [toggleSwitch, setToggleSwitch] = React.useState({
-    completed: data?.completed,
-    private: data?.private
-  });
+  const handleOnClick = () => navigate(APP_KEYS.ROUTER_KEYS.ROOT);
 
-  const handleOnClick = () => navigate('/');
-  if (isLoading || !isSuccess) {
+  if (isLoading) {
     return <Loader />;
   }
 
-  const handleEditTodo = () =>
-    editTodo({
-      id: data.id,
-      title: data.title,
-      description: data.description,
-      completed: toggleSwitch.completed as boolean,
-      private: toggleSwitch.private as boolean
-    });
+  const restData = {
+    id: data?.id as string,
+    title: data?.title as string,
+    description: data?.description as string
+  };
 
   const handleToggleComplete = () => {
-    setToggleSwitch((prev) => ({ completed: !prev.completed, private: prev.private }));
-    handleEditTodo();
+    editTodo({
+      ...restData,
+      completed: !data?.completed,
+      private: data?.private as boolean
+    });
   };
+
   const handleTogglePrivate = () => {
-    setToggleSwitch((prev) => ({ completed: prev.completed, private: !prev.private }));
-    handleEditTodo();
+    editTodo({
+      ...restData,
+      completed: data?.completed as boolean,
+      private: !data?.private
+    });
   };
+
+  if (isError) {
+    navigate(APP_KEYS.ROUTER_KEYS.ROOT);
+  }
 
   return (
     <Box sx={{ height: '100%', mt: 1, display: 'flex', flexDirection: 'column' }}>
       <Typography variant="h3" sx={{ mb: 2 }}>
-        {data.title}
+        {isSuccess && data.title}
       </Typography>
       <Typography variant="subtitle1" component="p">
         Description:
       </Typography>
       <Typography variant="h6" component="p" sx={{ flex: '1 1 auto' }}>
-        {data.description}
+        {isSuccess && data.description}
       </Typography>
       <Box sx={{ width: 288, display: 'flex', justifyContent: 'space-between', mb: 4, mt: 4 }}>
         <Typography variant="h6" component="p">
           Complete:
         </Typography>
         <Switch
-          checked={toggleSwitch.completed}
+          checked={isSuccess && data.completed}
           disabled={updPending}
           onChange={handleToggleComplete}
         />
@@ -64,7 +69,7 @@ const TodoPageContainer: React.FC = () => {
           Private:
         </Typography>
         <Switch
-          checked={toggleSwitch.private}
+          checked={isSuccess && data.private}
           disabled={updPending}
           onChange={handleTogglePrivate}
         />

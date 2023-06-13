@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { APP_KEYS } from '../../consts';
 
 export const PrivateRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
-  const isAuthenticated = localStorage.getItem('TOKEN') !== null;
+  const isAuthenticated = localStorage.getItem(APP_KEYS.STORAGE_KEYS.TOKEN) !== null;
 
   return isAuthenticated ? children : <Navigate to={APP_KEYS.ROUTER_KEYS.AUTH} replace />;
 };
