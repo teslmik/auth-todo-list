@@ -1,4 +1,6 @@
 export interface ISearchParams {
   search?: string;
-  status?: 'public' | 'private' | 'completed';
+  status?: 'all' | 'public' | 'private' | 'completed';
+  page: number;
+  pageSize: number;
 }

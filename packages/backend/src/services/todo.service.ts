@@ -11,7 +11,7 @@ export default class TodoService {
     this.todoRepository = appDataSource.getRepository(Todo);
   }
 
-  async findAll(currentUser: User, { search, status }: ISearchParams) {
+  async findAll(currentUser: User, { search, status, page, pageSize }: ISearchParams) {
     const query = this.todoRepository
       .createQueryBuilder('todo')
       .leftJoinAndSelect('todo.user', 'user')
@@ -29,14 +29,36 @@ export default class TodoService {
       query.andWhere('todo.completed = :completed', { completed: true });
     }
 
-    const todos = await query.orderBy('todo.createdAt', 'DESC').getMany();
+    const totalCount = await query.getCount();
+
+    query
+      .orderBy('todo.createdAt', 'DESC')
+      .skip((page - 1) * pageSize)
+      .take(pageSize);
+
+    const todos = await query.getMany();
 
     const result = todos.map((todo) => {
       const { user, ...restTodo } = todo;
       return { ...restTodo, userId: user.id };
     });
 
-    return result;
+    return {
+      totalCount,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: page,
+      pageSize,
+      data: result
+    };
+
+    // const todos = await query.orderBy('todo.createdAt', 'DESC').getMany();
+
+    // const result = todos.map((todo) => {
+    //   const { user, ...restTodo } = todo;
+    //   return { ...restTodo, userId: user.id };
+    // });
+
+    // return result;
   }
 
   async findOneById(id: string, authUser: User) {
