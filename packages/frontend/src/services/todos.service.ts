@@ -1,4 +1,5 @@
 import { APP_KEYS } from '../modules/common/consts';
+import { ButtonType } from '../modules/common/enums';
 import { ITodoQueries, ITodo, ITodoCreate } from '../modules/common/types';
 import HttpService from './http.service';
 
@@ -11,7 +12,7 @@ class TodoService extends HttpService {
   getAllTodos({ search, status }: ITodoQueries): Promise<ITodo[]> {
     const queryParams: string[] = [];
 
-    if (status !== 'all') {
+    if (status !== ButtonType.ALL) {
       queryParams.push(`status=${status}`);
     }
     if (search) {

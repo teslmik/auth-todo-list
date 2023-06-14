@@ -1,4 +1,4 @@
-import { ButtonType } from './bottun-group.type';
+import { ButtonType } from '../enums';
 
 export interface ITodoQueries {
   status: ButtonType;
