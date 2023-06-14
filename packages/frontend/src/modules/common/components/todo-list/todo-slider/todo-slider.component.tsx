@@ -11,7 +11,7 @@ import {
 import { AxiosResponse } from 'axios';
 import { useInView } from 'react-intersection-observer';
 import { TodoItem } from '../todo-item.component';
-import { IAllTodosData } from '../../../types';
+import { IAllTodosData, ITodo } from '../../../types';
 import { StyledSwiper } from './todo-slider.styled';
 
 import 'swiper/swiper.min.css';
@@ -64,7 +64,7 @@ export const TodoSlider: React.FC<Props> = ({
           {group.data.map((todo) => (
             <SwiperSlide key={todo.id}>
               <Box sx={{ width: 320, minHeight: 300 }}>
-                <TodoItem todo={todo} handleOpen={handleOpen} />
+                <TodoItem todo={todo as ITodo & { userId: string }} handleOpen={handleOpen} />
               </Box>
             </SwiperSlide>
           ))}

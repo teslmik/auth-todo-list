@@ -18,7 +18,7 @@ export const TodoList: React.FC<Props> = ({ status, search }) => {
 
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(5);
-  const [currentTodo, setCurrentTodo] = React.useState<ITodo | null>(null);
+  const [currentTodo, setCurrentTodo] = React.useState<(ITodo & { userId: string }) | null>(null);
 
   const { isOpen, setIsOpen } = useGlobalContext();
 
@@ -45,7 +45,9 @@ export const TodoList: React.FC<Props> = ({ status, search }) => {
   }
 
   const handleOpen = (id: string) => {
-    const findTodo = todosData.data.filter((todo) => todo.id === id)[0];
+    const findTodo = todosData.data.filter((todo) => todo.id === id)[0] as ITodo & {
+      userId: string;
+    };
     if (findTodo) {
       setCurrentTodo(findTodo);
     }

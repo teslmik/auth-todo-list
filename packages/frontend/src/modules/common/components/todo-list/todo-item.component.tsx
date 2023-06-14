@@ -5,7 +5,7 @@ import { TableActionsCell } from './table-actions.component';
 import { ITodo } from '../../types';
 
 interface Props {
-  todo: ITodo;
+  todo: ITodo & { userId: string };
   handleOpen: (id: string) => void;
 }
 

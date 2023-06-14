@@ -1,9 +1,11 @@
 import { Box, Button, Switch, Typography } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
 import React from 'react';
 import { useEditTodo, useGetOneTodo } from '../common/hooks';
 import { Loader } from '../common/components/loader';
 import { APP_KEYS } from '../common/consts';
+import { IUser } from '../common/types';
 
 const TodoPageContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -11,11 +13,16 @@ const TodoPageContainer: React.FC = () => {
   const { data, isLoading, isSuccess, isError } = useGetOneTodo(id as string);
   const { mutate: editTodo, isLoading: updPending } = useEditTodo();
 
+  const client = useQueryClient();
+  const authUser: IUser | undefined = client.getQueryData([APP_KEYS.QUERY_KEYS.USER]);
+
   const handleOnClick = () => navigate(APP_KEYS.ROUTER_KEYS.ROOT);
 
   if (isLoading) {
     return <Loader />;
   }
+
+  const isDisabled = data?.userId === authUser?.id;
 
   const restData = {
     id: data?.id as string,
@@ -70,7 +77,7 @@ const TodoPageContainer: React.FC = () => {
         </Typography>
         <Switch
           checked={isSuccess && data.private}
-          disabled={updPending}
+          disabled={updPending || !isDisabled}
           onChange={handleTogglePrivate}
         />
       </Box>

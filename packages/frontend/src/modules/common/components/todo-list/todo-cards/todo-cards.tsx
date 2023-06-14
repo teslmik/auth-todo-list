@@ -8,7 +8,7 @@ import {
 import { AxiosResponse } from 'axios';
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
-import { IAllTodosData } from '../../../types';
+import { IAllTodosData, ITodo } from '../../../types';
 import { TodoItem } from '../todo-item.component';
 import { StyledTodoCard } from './todo-cerd.styled';
 
@@ -44,7 +44,11 @@ export const TodoCards: React.FC<Props> = ({
       {data.pages.map((group, i) => (
         <React.Fragment key={i}>
           {group.data.map((todo) => (
-            <TodoItem key={todo.id} todo={todo} handleOpen={handleOpen} />
+            <TodoItem
+              key={todo.id}
+              todo={todo as ITodo & { userId: string }}
+              handleOpen={handleOpen}
+            />
           ))}
         </React.Fragment>
       ))}

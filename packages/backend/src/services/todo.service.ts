@@ -107,12 +107,18 @@ export default class TodoService {
     return updatedTodo;
   }
 
-  async deleteTodo(id: string, user: User) {
-    if (!user.isActivated) {
+  async deleteTodo(id: string, authUser: User) {
+    const currentTodo = await this.todoRepository.findOne({ where: { id }, relations: ['user'] });
+
+    if (currentTodo && currentTodo.user.id !== authUser.id) {
+      throw new Error('Access denied');
+    }
+
+    if (!authUser.isActivated) {
       throw new Error('User is not activated, please check your mail ');
     }
 
-    const deletedTodo = await this.findOneById(id, user);
+    const deletedTodo = await this.findOneById(id, authUser);
     await this.todoRepository.delete(id);
     return deletedTodo;
   }

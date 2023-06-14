@@ -34,7 +34,7 @@ class TodoService extends HttpService {
     );
   }
 
-  getOneTodo(todoId: string): Promise<ITodo> {
+  getOneTodo(todoId: string): Promise<ITodo & { userId: string }> {
     return this.get(
       {
         url: `${APP_KEYS.BACKEND_KEYS.TODOS}/${todoId}`
