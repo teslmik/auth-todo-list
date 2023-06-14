@@ -1,11 +1,18 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { APP_KEYS } from '../modules/common/consts';
+
+type FetchingService = typeof axios;
+
+interface Config extends AxiosRequestConfig {
+  url: string;
+  recieveAuthHeader?: boolean;
+}
 
 export default class HttpService {
   constructor(
     public baseUrl = process.env.REACT_APP_SERVER_URL,
-    public fetchingService = axios,
+    public fetchingService: FetchingService = axios,
     public apiVersion = APP_KEYS.BACKEND_KEYS.API_VERSION
   ) {
     this.baseUrl = baseUrl;
@@ -13,17 +20,17 @@ export default class HttpService {
     this.apiVersion = apiVersion;
   }
 
-  private getFullApiUrl(url: string) {
+  private getFullApiUrl(url: string): string {
     return `${this.baseUrl}/${this.apiVersion}/${url}`;
   }
 
-  private populateTokenToHeaderConfig() {
+  private populateTokenToHeaderConfig(): Record<string, string> {
     return {
-      Authorization: localStorage.getItem(APP_KEYS.STORAGE_KEYS.TOKEN)
+      Authorization: localStorage.getItem(APP_KEYS.STORAGE_KEYS.TOKEN) || ''
     };
   }
 
-  private extractUrlAndDataFromConfig({ data, url, ...configWithoutDataAndUrl }: any) {
+  private extractUrlAndDataFromConfig({ data, url, ...configWithoutDataAndUrl }: Config) {
     return configWithoutDataAndUrl;
   }
 
@@ -31,7 +38,7 @@ export default class HttpService {
     throw error.response;
   }
 
-  async get(config: any, withAuth = false) {
+  async get<T>(config: any, withAuth = false): Promise<T> {
     try {
       if (withAuth) {
         config.headers = {
@@ -50,7 +57,7 @@ export default class HttpService {
     }
   }
 
-  async post(config: any, withAuth = false) {
+  async post<T>(config: Config, withAuth = false): Promise<T> {
     try {
       if (withAuth) {
         config.headers = {
@@ -66,7 +73,7 @@ export default class HttpService {
 
       if (config.recieveAuthHeader) {
         const token = res.headers.authorization;
-        localStorage.setItem(APP_KEYS.STORAGE_KEYS.TOKEN, token);
+        localStorage.setItem(APP_KEYS.STORAGE_KEYS.TOKEN, token || '');
       }
       return res.data;
     } catch (error) {
@@ -74,7 +81,7 @@ export default class HttpService {
     }
   }
 
-  async put(config: any, withAuth = true) {
+  async put<T>(config: Config, withAuth = true): Promise<T> {
     try {
       if (withAuth) {
         config.headers = {
@@ -93,7 +100,7 @@ export default class HttpService {
     }
   }
 
-  async delete(config: any, withAuth = true) {
+  async delete<T>(config: Config, withAuth = true): Promise<T> {
     try {
       if (withAuth) {
         config.headers = {

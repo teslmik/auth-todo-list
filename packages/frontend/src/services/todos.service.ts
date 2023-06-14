@@ -1,5 +1,6 @@
 import { APP_KEYS } from '../modules/common/consts';
-import { ITodo, ITodoCreate } from '../modules/common/types';
+import { ButtonType } from '../modules/common/enums';
+import { ITodoQueries, ITodo, ITodoCreate } from '../modules/common/types';
 import HttpService from './http.service';
 
 class TodoService extends HttpService {
@@ -8,10 +9,21 @@ class TodoService extends HttpService {
     super();
   }
 
-  getAllTodos(): Promise<ITodo[]> {
+  getAllTodos({ search, status }: ITodoQueries): Promise<ITodo[]> {
+    const queryParams: string[] = [];
+
+    if (status !== ButtonType.ALL) {
+      queryParams.push(`status=${status}`);
+    }
+    if (search) {
+      queryParams.push(`search=${encodeURIComponent(search)}`);
+    }
+
+    const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+
     return this.get(
       {
-        url: APP_KEYS.BACKEND_KEYS.TODOS
+        url: `${APP_KEYS.BACKEND_KEYS.TODOS}${queryString}`
       },
       true
     );
