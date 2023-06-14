@@ -1,6 +1,7 @@
 import React from 'react';
+import { ButtonType } from '../../enums';
 import { useDebounce, useGetAllTodos, useGetAllTodosInfinite, useGlobalContext } from '../../hooks';
-import { ITodo, ButtonType } from '../../types';
+import { ITodo } from '../../types';
 import { EditModal } from '../edit-modal';
 import { EmptyData } from '../empti-data-placeholder/empty-data.component';
 import { Loader } from '../loader';

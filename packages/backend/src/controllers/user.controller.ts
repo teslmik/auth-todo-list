@@ -2,7 +2,7 @@ import { Response, Request, NextFunction } from 'express';
 import UserService from '../services/user.service';
 import { tokenService } from '../services/token.service';
 import { User } from '../entities';
-import { StatusCode } from '../enums/status-code.enum';
+import { StatusCode } from '../enums';
 
 export class UserController {
   constructor(private userService: UserService) {}

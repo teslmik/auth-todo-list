@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from 'express';
-import { StatusCode } from '../enums/status-code.enum';
+import { StatusCode } from '../enums';
 import { User } from '../entities';
 import TodoService from '../services/todo.service';
 import { ISearchParams } from '../types';

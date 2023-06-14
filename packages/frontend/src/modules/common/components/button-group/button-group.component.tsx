@@ -2,7 +2,7 @@ import { ButtonGroup, Button } from '@mui/material';
 import React from 'react';
 import { COLORS } from '../../../theme';
 import { buttonGroupData } from '../../consts';
-import { ButtonType } from '../../types';
+import { ButtonType } from '../../enums';
 
 interface Props {
   buttonLabel: ButtonType;

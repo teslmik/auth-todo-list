@@ -1,6 +1,8 @@
+import { TodoStatus } from '../enums';
+
 export interface ISearchParams {
   search?: string;
-  status?: 'all' | 'public' | 'private' | 'completed';
   page: number;
   pageSize: number;
+  status?: Omit<TodoStatus, TodoStatus.ALL>;
 }

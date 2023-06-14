@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { appDataSource } from '../config/app-data-source';
 import { ISearchParams, ITodoRequestDto, IUpdateTodoRequestDto } from '../types';
 import { Todo, User } from '../entities';
+import { TodoStatus } from '../enums';
 
 export default class TodoService {
   private readonly todoRepository: Repository<Todo>;
@@ -21,11 +22,11 @@ export default class TodoService {
         search: `%${search || ''}%`
       });
 
-    if (status === 'public') {
+    if (status === TodoStatus.PUBLIC) {
       query.andWhere('todo.private = :isPrivateFalse', { isPrivateFalse: false });
-    } else if (status === 'private') {
+    } else if (status === TodoStatus.PRIVATE) {
       query.andWhere('todo.private = :isPrivateTrue', { isPrivateTrue: true });
-    } else if (status === 'completed') {
+    } else if (status === TodoStatus.COMPLETED) {
       query.andWhere('todo.completed = :completed', { completed: true });
     }
 
