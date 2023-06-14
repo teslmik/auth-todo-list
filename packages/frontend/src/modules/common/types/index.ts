@@ -7,4 +7,5 @@ export type { ButtonType } from './bottun-group.type';
 export type { IUserLogin } from './user-login-type';
 export type { IUpdateUser } from './update-user.type';
 export type { ITodoQueries } from './todo-queries.type';
+export type { ITodoInfiniteQueries } from './todo-infinite-queries.type';
 export type { IAllTodosData } from './all-todos-data.type';

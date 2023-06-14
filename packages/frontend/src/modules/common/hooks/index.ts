@@ -10,3 +10,4 @@ export { useEditUser } from './use-edit-user';
 export { useRegisterUser } from './use-register-user';
 export { useRecoveryPassword } from './use-recovery-password';
 export { useDebounce } from './use-debounce';
+export { useGetAllTodosInfinite } from './use-get-all-todos-infinite';

@@ -7,9 +7,9 @@ import { ISearchParams } from '../types';
 export class TodoController {
   constructor(private todoService: TodoService) {}
 
-  async getAllTodo(req: Request, res: Response) {
+  async getAllTodo(req: Request<{}, {}, {}, ISearchParams>, res: Response) {
     const currentUser = req.user as User;
-    const queryParams = req.query as unknown as ISearchParams;
+    const queryParams = req.query;
 
     const todos = await this.todoService.findAll(currentUser, queryParams);
 

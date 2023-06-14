@@ -33,7 +33,7 @@ export default class TodoService {
 
     query
       .orderBy('todo.createdAt', 'DESC')
-      .skip((page || 0) * pageSize)
+      .skip((page - 1 || 0) * pageSize)
       .take(pageSize);
 
     const todos = await query.getMany();

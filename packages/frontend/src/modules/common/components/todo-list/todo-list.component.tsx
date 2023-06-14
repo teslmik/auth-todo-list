@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDebounce, useGetAllTodos, useGlobalContext } from '../../hooks';
+import { useDebounce, useGetAllTodos, useGetAllTodosInfinite, useGlobalContext } from '../../hooks';
 import { ITodo, ButtonType } from '../../types';
 import { EditModal } from '../edit-modal';
 import { EmptyData } from '../empti-data-placeholder/empty-data.component';
@@ -25,11 +25,22 @@ export const TodoList: React.FC<Props> = ({ status, search }) => {
   const { data: todosData, isLoading } = useGetAllTodos({
     status,
     search: debounce,
-    page,
+    page: page + 1,
     pageSize
   });
 
-  if (isLoading || !todosData) {
+  const {
+    data: todosInfinite,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useGetAllTodosInfinite({
+    status,
+    search: debounce,
+    pageSize
+  });
+
+  if (isLoading || !todosData || !todosInfinite) {
     return <Loader />;
   }
 
@@ -41,7 +52,7 @@ export const TodoList: React.FC<Props> = ({ status, search }) => {
     setIsOpen({ open: true, edit: true });
   };
 
-  const todoListProps = {
+  const todoListTableProps = {
     todos: todosData,
     handleOpen,
     page,
@@ -50,11 +61,19 @@ export const TodoList: React.FC<Props> = ({ status, search }) => {
     setPageSize
   };
 
+  const todoListProps = {
+    data: todosInfinite,
+    handleOpen,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  };
+
   return (
     <>
       {todosData.data.length > 0 ? (
         <>
-          <TodoTable {...todoListProps} />
+          <TodoTable {...todoListTableProps} />
           <TodoSlider {...todoListProps} />
           <TodoCards {...todoListProps} />
         </>
