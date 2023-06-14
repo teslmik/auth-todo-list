@@ -1,27 +1,9 @@
-import { Box } from '@mui/material';
 import React from 'react';
-import styled from 'styled-components';
 import { TodoButtonGroup } from '../common/components/button-group';
 import { TodoSearch } from '../common/components/search';
 import { TodoList } from '../common/components/todo-list';
 import { ButtonType } from '../common/enums';
-
-const StyledBoxMain = styled(Box)`
-  margin-top: ${({ theme }) => theme.SPACES.xl};
-  gap: 32px;
-
-  @media ${({ theme }) => theme.BREAKPOINTS.tablet} {
-    flex-direction: column-reverse;
-    align-items: center;
-    gap: 12px;
-  }
-
-  @media ${({ theme }) => theme.BREAKPOINTS.mobile} {
-    flex-direction: column-reverse;
-    align-items: center;
-    gap: 12px;
-  }
-`;
+import { StyledBoxMain } from './home.styled';
 
 const HomePageContainer: React.FC = () => {
   const [buttonLabel, setButtonLabel] = React.useState(ButtonType.ALL);

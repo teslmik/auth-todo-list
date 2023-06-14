@@ -19,7 +19,7 @@ export default class TodoService {
       .where('(todo.user.id = :userId OR (todo.private = false AND todo.user.id != :userId))')
       .andWhere('(todo.title LIKE :search OR todo.description LIKE :search)', {
         userId: currentUser.id,
-        search: `%${search || ''}%`
+        search: `%${search?.trim() || ''}%`
       });
 
     if (status === TodoStatus.PUBLIC) {
