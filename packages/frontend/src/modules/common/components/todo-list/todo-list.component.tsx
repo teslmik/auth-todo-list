@@ -1,6 +1,6 @@
 import React from 'react';
 import { ButtonType } from '../../enums';
-import { useDebounce, useGetAllTodos, useGlobalContext } from '../../hooks';
+import { useDebounce, useGetAllTodos, useGetAllTodosInfinite, useGlobalContext } from '../../hooks';
 import { ITodo } from '../../types';
 import { EditModal } from '../edit-modal';
 import { EmptyData } from '../empti-data-placeholder/empty-data.component';
@@ -16,29 +16,69 @@ interface Props {
 
 export const TodoList: React.FC<Props> = ({ status, search }) => {
   const debounce = useDebounce(search);
-  const { data: todos, isLoading } = useGetAllTodos({ status, search: debounce });
+
+  const [page, setPage] = React.useState(0);
+  const [pageSize, setPageSize] = React.useState(5);
+  const [currentTodo, setCurrentTodo] = React.useState<(ITodo & { userId: string }) | null>(null);
+
   const { isOpen, setIsOpen } = useGlobalContext();
-  const [currentTodo, setCurrentTodo] = React.useState<ITodo | null>(null);
+
+  const { data: todosData, isLoading } = useGetAllTodos({
+    status,
+    search: debounce,
+    page: page + 1,
+    pageSize
+  });
+
+  const {
+    data: todosInfinite,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useGetAllTodosInfinite({
+    status,
+    search: debounce,
+    pageSize
+  });
+
+  if (isLoading || !todosData || !todosInfinite) {
+    return <Loader />;
+  }
 
   const handleOpen = (id: string) => {
-    const findTodo = todos?.filter((todo) => todo.id === id)[0];
+    const findTodo = todosData.data.filter((todo) => todo.id === id)[0] as ITodo & {
+      userId: string;
+    };
     if (findTodo) {
       setCurrentTodo(findTodo);
     }
     setIsOpen({ open: true, edit: true });
   };
 
-  if (isLoading || !todos) {
-    return <Loader />;
-  }
+  const todoListTableProps = {
+    todos: todosData,
+    handleOpen,
+    page,
+    setPage,
+    pageSize,
+    setPageSize
+  };
+
+  const todoListProps = {
+    data: todosInfinite,
+    handleOpen,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  };
 
   return (
     <>
-      {todos?.length > 0 ? (
+      {todosData.data.length > 0 ? (
         <>
-          <TodoTable todos={todos} handleOpen={handleOpen} />
-          <TodoSlider todos={todos} handleOpen={handleOpen} />
-          <TodoCards todos={todos} handleOpen={handleOpen} />
+          <TodoTable {...todoListTableProps} />
+          <TodoSlider {...todoListProps} />
+          <TodoCards {...todoListProps} />
         </>
       ) : (
         <EmptyData message={"You don't have any todos yet"} />

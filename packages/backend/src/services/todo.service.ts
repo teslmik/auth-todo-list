@@ -12,14 +12,14 @@ export default class TodoService {
     this.todoRepository = appDataSource.getRepository(Todo);
   }
 
-  async findAll(currentUser: User, { search, status }: ISearchParams) {
+  async findAll(currentUser: User, { search, status, page, pageSize }: ISearchParams) {
     const query = this.todoRepository
       .createQueryBuilder('todo')
       .leftJoinAndSelect('todo.user', 'user')
       .where('(todo.user.id = :userId OR (todo.private = false AND todo.user.id != :userId))')
       .andWhere('(todo.title LIKE :search OR todo.description LIKE :search)', {
         userId: currentUser.id,
-        search: `%${search || ''}%`
+        search: `%${search?.trim() || ''}%`
       });
 
     if (status === TodoStatus.PUBLIC) {
@@ -30,14 +30,27 @@ export default class TodoService {
       query.andWhere('todo.completed = :completed', { completed: true });
     }
 
-    const todos = await query.orderBy('todo.createdAt', 'DESC').getMany();
+    const totalCount = await query.getCount();
+
+    query
+      .orderBy('todo.createdAt', 'DESC')
+      .skip((page - 1 || 0) * pageSize)
+      .take(pageSize);
+
+    const todos = await query.getMany();
 
     const result = todos.map((todo) => {
       const { user, ...restTodo } = todo;
       return { ...restTodo, userId: user.id };
     });
 
-    return result;
+    return {
+      totalCount,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: page,
+      pageSize,
+      data: result
+    };
   }
 
   async findOneById(id: string, authUser: User) {
@@ -95,12 +108,18 @@ export default class TodoService {
     return updatedTodo;
   }
 
-  async deleteTodo(id: string, user: User) {
-    if (!user.isActivated) {
+  async deleteTodo(id: string, authUser: User) {
+    const currentTodo = await this.todoRepository.findOne({ where: { id }, relations: ['user'] });
+
+    if (currentTodo && currentTodo.user.id !== authUser.id) {
+      throw new Error('Access denied');
+    }
+
+    if (!authUser.isActivated) {
       throw new Error('User is not activated, please check your mail ');
     }
 
-    const deletedTodo = await this.findOneById(id, user);
+    const deletedTodo = await this.findOneById(id, authUser);
     await this.todoRepository.delete(id);
     return deletedTodo;
   }

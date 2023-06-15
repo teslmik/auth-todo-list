@@ -13,11 +13,7 @@ interface Props {
 }
 
 export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
-  const {
-    data: userData,
-    isSuccess,
-    refetch
-  } = useGetUser(isOpen.open ? !isOpen.recovery : isOpen.open);
+  const { data: userData, isSuccess } = useGetUser(isOpen.open ? !isOpen.recovery : isOpen.open);
   const { mutate: editUser } = useEditUser();
   const { mutate: recovery, isLoading } = useRecoveryPassword();
 
@@ -60,7 +56,6 @@ export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       if (isOpen.recovery) {
         setFieldValue('email', '');
       } else {
-        refetch();
         setFieldValue('email', userData.email);
         setFieldValue('password', '');
       }

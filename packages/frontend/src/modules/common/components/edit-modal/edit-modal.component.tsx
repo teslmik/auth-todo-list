@@ -8,22 +8,28 @@ import {
   TextField,
   Typography
 } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import React from 'react';
+import { APP_KEYS } from '../../consts';
 import { useCreateTodos, useEditTodo } from '../../hooks';
-import { ITodoCreate, ITodo } from '../../types';
+import { ITodoCreate, ITodo, IUser } from '../../types';
 import { editModalStyled } from './edit-modal.styled';
 
 interface Props {
   isOpen: { open: boolean; edit?: boolean };
   setIsOpen: React.Dispatch<React.SetStateAction<{ open: boolean; edit?: boolean }>>;
-  todo?: ITodo | null;
+  todo?: (ITodo & { userId: string }) | null;
 }
 
 export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
   const [isPrivate, setIsPrivate] = React.useState(todo?.private ?? false);
   const { mutate: create } = useCreateTodos();
   const { mutate: editTodo } = useEditTodo();
+
+  const client = useQueryClient();
+  const authUser: IUser | undefined = client.getQueryData([APP_KEYS.QUERY_KEYS.USER]);
+  const isDisabled = todo?.userId === authUser?.id;
 
   const handleOnSudmit = (data: ITodoCreate) => {
     data.private = isPrivate;
@@ -98,7 +104,13 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
             <FormControlLabel
               name="private"
               labelPlacement="start"
-              control={<Switch checked={isPrivate} onChange={handleSwitchOnChange} />}
+              control={
+                <Switch
+                  checked={isPrivate}
+                  onChange={handleSwitchOnChange}
+                  disabled={todo?.userId ? !isDisabled : false}
+                />
+              }
               label="Private"
             />
             <Button variant="contained" type="submit">

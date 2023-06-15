@@ -15,7 +15,7 @@ export const TodoTableRows: React.FC<Props> = ({ handleOpen, rows }) => (
         <TableCell>{row.title}</TableCell>
         <TableCell sx={{ wordWrap: ' break-word' }}>{row.description}</TableCell>
         <TableCell align="right">
-          <TableActionsCell row={row} handleOpen={handleOpen} />
+          <TableActionsCell row={row as ITodo & { userId: string }} handleOpen={handleOpen} />
         </TableCell>
       </TableRow>
     ))}

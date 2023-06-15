@@ -2,24 +2,32 @@ import React from 'react';
 import { Paper, Table, TableContainer, TablePagination } from '@mui/material';
 import { TableHeader } from './table-header.component';
 import { TodoTableRows } from './todo-table-rows.component';
-import { ITodo } from '../../../types';
+import { IAllTodosData } from '../../../types';
 import { StylesBox } from './todo-table.styled';
 
 interface Props {
-  todos: ITodo[];
+  todos: IAllTodosData;
   handleOpen: (id: string) => void;
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  pageSize: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export const TodoTable: React.FC<Props> = ({ todos, handleOpen }) => {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+export const TodoTable: React.FC<Props> = ({
+  todos,
+  handleOpen,
+  page,
+  setPage,
+  pageSize,
+  setPageSize
+}) => {
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setPageSize(parseInt(event.target.value, 10));
     setPage(0);
   };
 
@@ -29,14 +37,14 @@ export const TodoTable: React.FC<Props> = ({ todos, handleOpen }) => {
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
             <TableHeader />
-            <TodoTableRows handleOpen={handleOpen} rows={todos} />
+            <TodoTableRows handleOpen={handleOpen} rows={todos.data} />
           </Table>
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={todos.length}
-          rowsPerPage={rowsPerPage}
+          count={todos.totalCount}
+          rowsPerPage={pageSize}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
