@@ -14,7 +14,8 @@ import React from 'react';
 import { APP_KEYS } from '../../consts';
 import { useCreateTodos, useEditTodo } from '../../hooks';
 import { ITodoCreate, ITodo, IUser } from '../../types';
-import { editModalStyled } from './edit-modal.styled';
+import { todoValidate } from '../../validation';
+import { editModalStyled, StyledTextFields } from './edit-modal.styled';
 
 interface Props {
   isOpen: { open: boolean; edit?: boolean };
@@ -24,6 +25,7 @@ interface Props {
 
 export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
   const [isPrivate, setIsPrivate] = React.useState(todo?.private ?? false);
+
   const { mutate: create } = useCreateTodos();
   const { mutate: editTodo } = useEditTodo();
 
@@ -42,14 +44,18 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
     setIsOpen({ open: false });
   };
 
-  const { values, handleChange, handleSubmit, setFieldValue, resetForm } = useFormik({
-    initialValues: {
-      title: '',
-      description: '',
-      private: false
-    },
-    onSubmit: handleOnSudmit
-  });
+  const { values, handleChange, handleSubmit, setFieldValue, resetForm, errors, submitCount } =
+    useFormik({
+      initialValues: {
+        title: '',
+        description: '',
+        private: false
+      },
+      onSubmit: handleOnSudmit,
+      validate: todoValidate,
+      validateOnBlur: false,
+      validateOnChange: false
+    });
 
   const handleOnClose = () => {
     setIsOpen((prev) => ({ open: false, edit: prev.edit }));
@@ -59,10 +65,10 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
   const handleSwitchOnChange = () => setIsPrivate(!isPrivate);
 
   React.useEffect(() => {
-    setIsPrivate(todo ? todo.private : isPrivate);
+    setIsPrivate(isOpen.edit ? todo?.private ?? false : false);
     setFieldValue('title', isOpen.edit && todo ? todo.title : '');
     setFieldValue('description', isOpen.edit && todo ? todo.description : '');
-    setFieldValue('private', isOpen.edit && todo ? todo.private : isPrivate);
+    setFieldValue('private', isOpen.edit ? todo?.private ?? false : isPrivate);
   }, [isOpen, todo]);
 
   return (
@@ -78,8 +84,10 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             {isOpen.edit ? 'Edit Todo' : 'Create todo'}
           </Typography>
-          <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+          <StyledTextFields>
             <TextField
+              error={submitCount > 0 && !!errors.title}
+              helperText={(submitCount > 0 && errors.title) || ''}
               required
               id="outlined-required"
               name="title"
@@ -90,6 +98,8 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
               margin="normal"
             />
             <TextField
+              error={submitCount > 0 && !!errors.description}
+              helperText={(submitCount > 0 && errors.description) || ''}
               required
               id="outlined-disabled"
               name="description"
@@ -108,7 +118,7 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
                 <Switch
                   checked={isPrivate}
                   onChange={handleSwitchOnChange}
-                  disabled={todo?.userId ? !isDisabled : false}
+                  disabled={isOpen.edit ? !isDisabled : false}
                 />
               }
               label="Private"
@@ -116,7 +126,7 @@ export const EditModal: React.FC<Props> = ({ isOpen, setIsOpen, todo }) => {
             <Button variant="contained" type="submit">
               {isOpen.edit ? 'Edit todo' : 'Create todo'}
             </Button>
-          </div>
+          </StyledTextFields>
         </Box>
       </Fade>
     </Modal>

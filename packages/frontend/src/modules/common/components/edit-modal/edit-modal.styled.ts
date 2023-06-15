@@ -1,3 +1,5 @@
+import styled from 'styled-components';
+
 export const editModalStyled = {
   display: 'flex',
   flexDirection: 'column',
@@ -13,3 +15,9 @@ export const editModalStyled = {
   boxShadow: 24,
   p: 3
 };
+
+export const StyledTextFields = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;

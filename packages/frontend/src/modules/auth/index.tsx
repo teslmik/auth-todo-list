@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { TextField, Button, Typography, Link } from '@mui/material';
-import { StyledContainer, StyledForm } from './auth.styled';
+import { StyledContainer, StyledForm, StyledTitle } from './auth.styled';
 import { loginValidate, registerValidate } from '../common/validation';
 import { ProfileModal } from '../common/components/profile-modal';
 import { useLoginUser, useRegisterUser } from '../common/hooks';
@@ -70,11 +70,14 @@ export const AuthPage: React.FC = () => {
 
   return (
     <StyledContainer sx={{ display: 'flex' }}>
-      <Typography variant="h5">{isRegister ? 'Registration' : 'Login'}</Typography>
+      <StyledTitle variant="h2">Todo List</StyledTitle>
       <StyledForm onSubmit={handleSubmit}>
+        <Typography align="center" variant="h5">
+          {isRegister ? 'Registration' : 'Login'}
+        </Typography>
         <TextField
           error={!!errors.email && !touched.email}
-          helperText={errors.email}
+          helperText={!touched.email && errors.email}
           fullWidth
           id="email"
           name="email"
@@ -85,7 +88,7 @@ export const AuthPage: React.FC = () => {
         />
         <TextField
           error={!!errors.password && !touched.password}
-          helperText={errors.password}
+          helperText={!touched.password && errors.password}
           fullWidth
           id="password"
           name="password"
@@ -98,7 +101,7 @@ export const AuthPage: React.FC = () => {
         {isRegister ? (
           <TextField
             error={!!errors.confirmPassword && !touched.confirmPassword}
-            helperText={errors.confirmPassword}
+            helperText={!touched.confirmPassword && errors.confirmPassword}
             fullWidth
             id="confirmPassword"
             name="confirmPassword"

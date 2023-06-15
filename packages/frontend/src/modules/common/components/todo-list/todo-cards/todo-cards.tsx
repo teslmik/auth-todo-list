@@ -10,7 +10,7 @@ import React from 'react';
 import { useInView } from 'react-intersection-observer';
 import { IAllTodosData, ITodo } from '../../../types';
 import { TodoItem } from '../todo-item.component';
-import { StyledTodoCard } from './todo-cerd.styled';
+import { StyledTodoCard } from './todo-card.styled';
 
 interface Props {
   data: InfiniteData<IAllTodosData>;

@@ -20,6 +20,7 @@ export const TodoList: React.FC<Props> = ({ status, search }) => {
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(5);
   const [currentTodo, setCurrentTodo] = React.useState<(ITodo & { userId: string }) | null>(null);
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
 
   const { isOpen, setIsOpen } = useGlobalContext();
 
@@ -40,6 +41,18 @@ export const TodoList: React.FC<Props> = ({ status, search }) => {
     search: debounce,
     pageSize
   });
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   if (isLoading || !todosData || !todosInfinite) {
     return <Loader />;
@@ -75,11 +88,13 @@ export const TodoList: React.FC<Props> = ({ status, search }) => {
   return (
     <>
       {todosData.data.length > 0 ? (
-        <>
+        windowWidth >= 768 ? (
           <TodoTable {...todoListTableProps} />
-          <TodoSlider {...todoListProps} />
+        ) : windowWidth <= 425 ? (
           <TodoCards {...todoListProps} />
-        </>
+        ) : (
+          <TodoSlider {...todoListProps} />
+        )
       ) : (
         <EmptyData message={"You don't have any todos yet"} />
       )}
