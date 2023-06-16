@@ -1,8 +1,8 @@
 import { Box, Button, Fade, Modal, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import React from 'react';
-import { useGetUser, useEditUser, useRecoveryPassword } from '../../hooks';
-import { IUpdateUser } from '../../types';
+import { useEditUser, useRecoveryPassword } from '../../hooks';
+import { IUpdateUser, IUser } from '../../types';
 import { profileValidate } from '../../validation';
 import { Loader } from '../loader';
 import { profileModalStyled } from './profile-modal.styled';
@@ -10,10 +10,11 @@ import { profileModalStyled } from './profile-modal.styled';
 interface Props {
   isOpen: { open: boolean; recovery?: boolean };
   setIsOpen: React.Dispatch<React.SetStateAction<{ open: boolean; recovery?: boolean }>>;
+  userData?: IUser | undefined;
+  isSuccess?: boolean;
 }
 
-export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
-  const { data: userData, isSuccess } = useGetUser(isOpen.open ? !isOpen.recovery : isOpen.open);
+export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen, userData, isSuccess }) => {
   const { mutate: editUser } = useEditUser();
   const { mutate: recovery, isLoading } = useRecoveryPassword();
 
@@ -24,9 +25,8 @@ export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       if (data.email && data.email !== userData?.email) {
         editUser({ email: data.email });
       }
-    } else if (!data.email) {
+    } else if (!data.email || data.email === userData?.email) {
       editUser({
-        email: userData?.email,
         password: data?.password,
         newPassword: data?.newPassword
       });
@@ -56,7 +56,7 @@ export const ProfileModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       if (isOpen.recovery) {
         setFieldValue('email', '');
       } else {
-        setFieldValue('email', userData.email);
+        setFieldValue('email', userData?.email);
         setFieldValue('password', '');
       }
     }

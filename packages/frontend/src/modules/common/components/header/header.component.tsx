@@ -1,10 +1,11 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { AppBar, Toolbar, Button, Container } from '@mui/material';
-import { useGlobalContext } from '../../hooks';
+import { Toolbar, Button, Container, Typography } from '@mui/material';
+import { useGetUser, useGlobalContext } from '../../hooks';
 import { APP_KEYS } from '../../consts';
 import { HeaderMenu } from '../header-menu';
 import { ProfileModal } from '../profile-modal/profile-modal.component';
+import { StyledAppBar } from './header.styled';
 
 export const Header: React.FC = () => {
   const { pathname } = useLocation();
@@ -18,6 +19,10 @@ export const Header: React.FC = () => {
     recovery: false
   });
 
+  const { data: userData, isSuccess } = useGetUser(
+    isOpenProfile.open ? !isOpenProfile.recovery : isOpenProfile.open
+  );
+
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -26,28 +31,44 @@ export const Header: React.FC = () => {
 
   return (
     <Container>
-      <AppBar position="static" color="transparent" sx={{ boxShadow: 'none' }}>
+      <StyledAppBar position="static" color="transparent">
         <Toolbar
+          className="toolbar"
           sx={{
-            width: '100%',
             justifyContent: `
               ${pathname === APP_KEYS.ROUTER_KEYS.ROOT ? 'space-between' : 'flex-end'}
-            `,
-            padding: 0
+            `
           }}
         >
           {pathname === APP_KEYS.ROUTER_KEYS.ROOT && (
-            <Button color="inherit" variant="outlined" onClick={handleIsOpen}>
-              Add ToDo
+            <Button
+              color="inherit"
+              variant="outlined"
+              onClick={handleIsOpen}
+              disabled={!userData?.isActivated}
+            >
+              Add
             </Button>
           )}
-          <Button color="inherit" variant="outlined" onClick={handleMenu}>
-            My profile
-          </Button>
-          <HeaderMenu anchorEl={anchorEl} setAnchorEl={setAnchorEl} setIsOpen={setIsOpenProfile} />
+          <div className="profile-block">
+            {isSuccess ? <Typography variant="body1">{userData.email}</Typography> : null}
+            <Button color="inherit" variant="outlined" onClick={handleMenu} disabled={!isSuccess}>
+              Profile
+            </Button>
+            <HeaderMenu
+              anchorEl={anchorEl}
+              setAnchorEl={setAnchorEl}
+              setIsOpen={setIsOpenProfile}
+            />
+          </div>
         </Toolbar>
-      </AppBar>
-      <ProfileModal isOpen={isOpenProfile} setIsOpen={setIsOpenProfile} />
+      </StyledAppBar>
+      <ProfileModal
+        isOpen={isOpenProfile}
+        setIsOpen={setIsOpenProfile}
+        userData={userData}
+        isSuccess={isSuccess}
+      />
     </Container>
   );
 };

@@ -11,9 +11,16 @@ const HomePageContainer: React.FC = () => {
   const { data, isLoading, isSuccess } = useGetUser();
 
   const [buttonLabel, setButtonLabel] = React.useState(ButtonType.ALL);
+  const [isUserLoaded, setIsUserLoaded] = React.useState(false);
   const [search, setSearch] = React.useState('');
 
-  if (isLoading || !isSuccess) {
+  React.useEffect(() => {
+    if (data) {
+      setIsUserLoaded(true);
+    }
+  }, [data]);
+
+  if (isLoading || !isSuccess || !isUserLoaded) {
     return <Loader />;
   }
 
@@ -23,9 +30,8 @@ const HomePageContainer: React.FC = () => {
         <TodoButtonGroup buttonLabel={buttonLabel} setButtonLabel={setButtonLabel} />
         <TodoSearch search={search} setSearch={setSearch} />
       </StyledBoxMain>
-      {isSuccess && data.isActivated ? (
-        <TodoList status={buttonLabel} search={search} />
-      ) : (
+      {isUserLoaded && data.isActivated && <TodoList status={buttonLabel} search={search} />}
+      {isUserLoaded && !data.isActivated && (
         <StyledAlertMain severity="error">
           {`The user is not activated, please go to the email ${data?.email} and open the link in the letter to
           activate`}

@@ -60,6 +60,14 @@ export default class UserService {
   }
 
   async edit(payload: IUserUpdateDto) {
+    if (payload.email) {
+      const checkEmail = await this.findUserByEmail(payload.email);
+
+      if (checkEmail) {
+        throw new Error(`User with email address ${payload.email} already exists`);
+      }
+    }
+
     const editedPayload = await editEmailPasswordBoth(payload);
     const editedUser = await this.userRepository.save({
       ...editedPayload,
