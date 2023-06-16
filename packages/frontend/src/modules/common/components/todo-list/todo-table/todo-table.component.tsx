@@ -33,9 +33,9 @@ export const TodoTable: React.FC<Props> = ({
 
   return (
     <StylesBox>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+      <Paper className="paper">
         <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
+          <Table aria-labelledby="tableTitle" size="medium">
             <TableHeader />
             <TodoTableRows handleOpen={handleOpen} rows={todos.data} />
           </Table>

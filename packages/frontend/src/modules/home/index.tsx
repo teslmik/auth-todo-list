@@ -1,4 +1,3 @@
-import { Alert } from '@mui/material';
 import React from 'react';
 import { TodoButtonGroup } from '../common/components/button-group';
 import { Loader } from '../common/components/loader';
@@ -6,7 +5,7 @@ import { TodoSearch } from '../common/components/search';
 import { TodoList } from '../common/components/todo-list';
 import { ButtonType } from '../common/enums';
 import { useGetUser } from '../common/hooks';
-import { StyledBoxMain } from './home.styled';
+import { StyledAlertMain, StyledBoxMain } from './home.styled';
 
 const HomePageContainer: React.FC = () => {
   const { data, isLoading, isSuccess } = useGetUser();
@@ -20,26 +19,17 @@ const HomePageContainer: React.FC = () => {
 
   return (
     <>
-      <StyledBoxMain component="div" sx={{ display: 'flex' }}>
+      <StyledBoxMain component="div">
         <TodoButtonGroup buttonLabel={buttonLabel} setButtonLabel={setButtonLabel} />
         <TodoSearch search={search} setSearch={setSearch} />
       </StyledBoxMain>
       {isSuccess && data.isActivated ? (
         <TodoList status={buttonLabel} search={search} />
       ) : (
-        <Alert
-          severity="error"
-          sx={{
-            disply: 'flex',
-            alignItems: 'center',
-            position: 'relative',
-            top: '50%',
-            transform: 'translateY(-100%)'
-          }}
-        >
+        <StyledAlertMain severity="error">
           {`The user is not activated, please go to the email ${data?.email} and open the link in the letter to
           activate`}
-        </Alert>
+        </StyledAlertMain>
       )}
     </>
   );

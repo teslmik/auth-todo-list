@@ -2,12 +2,16 @@ import { Container, Typography } from '@mui/material';
 import styled from 'styled-components';
 
 export const StyledContainer = styled(Container)`
-  display: flex;
+  display: flex !important;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   gap: ${({ theme }) => theme.SPACES.l};
   overflow: hidden;
+
+  a {
+    cursor: pointer;
+  }
 `;
 
 export const StyledForm = styled.form`

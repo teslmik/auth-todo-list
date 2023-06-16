@@ -6,6 +6,7 @@ import { useEditTodo, useGetOneTodo } from '../common/hooks';
 import { Loader } from '../common/components/loader';
 import { APP_KEYS } from '../common/consts';
 import { IUser } from '../common/types';
+import { StyledTodoPage } from './todo-page.styled';
 
 const TodoPageContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -51,17 +52,15 @@ const TodoPageContainer: React.FC = () => {
   }
 
   return (
-    <Box sx={{ height: '100%', mt: 1, display: 'flex', flexDirection: 'column' }}>
-      <Typography variant="h3" sx={{ mb: 2 }}>
-        {isSuccess && data.title}
-      </Typography>
+    <StyledTodoPage>
+      <Typography variant="h3">{isSuccess && data.title}</Typography>
       <Typography variant="subtitle1" component="p">
         Description:
       </Typography>
-      <Typography variant="h6" component="p" sx={{ flex: '1 1 auto' }}>
+      <Typography className="box-description" variant="h6" component="p">
         {isSuccess && data.description}
       </Typography>
-      <Box sx={{ width: 288, display: 'flex', justifyContent: 'space-between', mb: 4, mt: 4 }}>
+      <Box className="box-completed">
         <Typography variant="h6" component="p">
           Complete:
         </Typography>
@@ -71,7 +70,7 @@ const TodoPageContainer: React.FC = () => {
           onChange={handleToggleComplete}
         />
       </Box>
-      <Box sx={{ width: 288, display: 'flex', justifyContent: 'space-between', mb: 4, mt: 4 }}>
+      <Box className="box-actions">
         <Typography variant="h6" component="p">
           Private:
         </Typography>
@@ -82,11 +81,11 @@ const TodoPageContainer: React.FC = () => {
         />
       </Box>
       <Box>
-        <Button variant="contained" sx={{ width: 288, mb: 5, mt: 4 }} onClick={handleOnClick}>
+        <Button className="box-button" variant="contained" onClick={handleOnClick}>
           Back
         </Button>
       </Box>
-    </Box>
+    </StyledTodoPage>
   );
 };
 

@@ -63,7 +63,7 @@ export const TodoSlider: React.FC<Props> = ({
         <React.Fragment key={i}>
           {group.data.map((todo) => (
             <SwiperSlide key={todo.id}>
-              <Box sx={{ width: 320, minHeight: 300 }}>
+              <Box className="swiper-slide-box">
                 <TodoItem todo={todo as ITodo & { userId: string }} handleOpen={handleOpen} />
               </Box>
             </SwiperSlide>
@@ -72,15 +72,7 @@ export const TodoSlider: React.FC<Props> = ({
       ))}
       {hasNextPage && (
         <SwiperSlide>
-          <Box
-            sx={{
-              width: 320,
-              minHeight: 300,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
+          <Box className="swiper-slide-box load-button">
             <Button
               ref={ref}
               disabled={!hasNextPage || isFetchingNextPage}

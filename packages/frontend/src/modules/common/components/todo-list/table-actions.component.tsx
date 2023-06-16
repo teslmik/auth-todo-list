@@ -1,9 +1,10 @@
-import { Box, Button, ButtonGroup, Switch } from '@mui/material';
+import { Button, ButtonGroup, Switch } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { APP_KEYS, buttonGroupActions } from '../../consts';
 import { useDeleteTodo, useEditTodo, useGetUser } from '../../hooks';
 import { ITodo } from '../../types';
+import { StyledTableActions } from './todo-list.styled';
 
 interface Props {
   row: ITodo & { userId: string };
@@ -37,7 +38,7 @@ export const TableActionsCell: React.FC<Props> = ({ row, handleOpen }) => {
     });
 
   return (
-    <Box component="div" sx={{ display: 'flex', flexWrap: 'nowrap', gap: 1 }}>
+    <StyledTableActions component="div">
       <ButtonGroup variant="contained" aria-label="outlined primary button group">
         {buttonGroupActions.map((button, index) => (
           <Button
@@ -52,6 +53,6 @@ export const TableActionsCell: React.FC<Props> = ({ row, handleOpen }) => {
         ))}
       </ButtonGroup>
       <Switch checked={row.completed} disabled={updPending} onChange={handleEditTodo} />
-    </Box>
+    </StyledTableActions>
   );
 };

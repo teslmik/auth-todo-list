@@ -69,7 +69,7 @@ export const AuthPage: React.FC = () => {
   }
 
   return (
-    <StyledContainer sx={{ display: 'flex' }}>
+    <StyledContainer>
       <StyledTitle variant="h2">Todo List</StyledTitle>
       <StyledForm onSubmit={handleSubmit}>
         <Typography align="center" variant="h5">
@@ -113,9 +113,7 @@ export const AuthPage: React.FC = () => {
           />
         ) : (
           <Typography variant="body2" align="right" marginTop="-20px">
-            <Link sx={{ cursor: 'pointer' }} onClick={handleRecovery}>
-              Forgot password?
-            </Link>
+            <Link onClick={handleRecovery}>Forgot password?</Link>
           </Typography>
         )}
         <Button fullWidth variant="contained" color="primary" type="submit" disabled={!isValid}>
@@ -123,9 +121,7 @@ export const AuthPage: React.FC = () => {
         </Button>
         <Typography variant="body2">
           {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
-          <Link sx={{ cursor: 'pointer' }} onClick={handleToogleAuth}>
-            {isRegister ? 'Login' : 'Registration'}
-          </Link>
+          <Link onClick={handleToogleAuth}>{isRegister ? 'Login' : 'Registration'}</Link>
         </Typography>
       </StyledForm>
       <ProfileModal isOpen={modalIsOpen} setIsOpen={setModalIsOpen} />
