@@ -11,6 +11,7 @@ const HomePageContainer: React.FC = () => {
   const { data, isLoading, isSuccess } = useGetUser();
 
   const [buttonLabel, setButtonLabel] = React.useState(ButtonType.ALL);
+  const [page, setPage] = React.useState(0);
   const [isUserLoaded, setIsUserLoaded] = React.useState(false);
   const [search, setSearch] = React.useState('');
 
@@ -19,6 +20,10 @@ const HomePageContainer: React.FC = () => {
       setIsUserLoaded(true);
     }
   }, [data]);
+
+  React.useEffect(() => {
+    setPage(0);
+  }, [buttonLabel]);
 
   if (isLoading || !isSuccess || !isUserLoaded) {
     return <Loader />;
@@ -30,7 +35,9 @@ const HomePageContainer: React.FC = () => {
         <TodoButtonGroup buttonLabel={buttonLabel} setButtonLabel={setButtonLabel} />
         <TodoSearch search={search} setSearch={setSearch} />
       </StyledBoxMain>
-      {isUserLoaded && data.isActivated && <TodoList status={buttonLabel} search={search} />}
+      {isUserLoaded && data.isActivated && (
+        <TodoList status={buttonLabel} search={search} page={page} setPage={setPage} />
+      )}
       {isUserLoaded && !data.isActivated && (
         <StyledAlertMain severity="error">
           {`The user is not activated, please go to the email ${data?.email} and open the link in the letter to

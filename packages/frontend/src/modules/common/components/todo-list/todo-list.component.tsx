@@ -12,12 +12,13 @@ import { TodoTable } from './todo-table/todo-table.component';
 interface Props {
   status: ButtonType;
   search: string;
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export const TodoList: React.FC<Props> = ({ status, search }) => {
+export const TodoList: React.FC<Props> = ({ status, search, page, setPage }) => {
   const debounce = useDebounce(search);
 
-  const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(5);
   const [currentTodo, setCurrentTodo] = React.useState<(ITodo & { userId: string }) | null>(null);
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
