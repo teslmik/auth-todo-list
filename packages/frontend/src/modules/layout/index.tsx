@@ -7,10 +7,11 @@ import { APP_KEYS } from '../common/consts';
 
 const MainLayout: React.FC = () => {
   const { pathname } = useLocation();
+  const token = localStorage.getItem(APP_KEYS.STORAGE_KEYS.TOKEN) !== null;
 
   return (
     <>
-      {pathname === `/${APP_KEYS.ROUTER_KEYS.AUTH}` ? null : <Header />}
+      {pathname === `/${APP_KEYS.ROUTER_KEYS.AUTH}` || !token ? null : <Header />}
       <Divider variant="middle" />
       <Container sx={{ height: 'calc(100vh - 98px)' }}>
         <Outlet />

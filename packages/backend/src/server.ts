@@ -14,7 +14,7 @@ const router = new AppRouter(app);
 connectDB();
 
 // Express configuration
-app.set('port', process.env.PORT || 5003);
+app.set('port', process.env.PORT || 5000);
 app.use(passport.initialize());
 app.use(morgan('dev'));
 app.use(cors());

@@ -5,7 +5,7 @@ export const generateRandomPassword = (length: number) => {
     length,
     numbers: true,
     symbols: true,
-    exclude: '()-_=+[]{}|<,>.?/`~:;',
+    exclude: '()-_=+[]{}|<,>.?/`~:;"',
     uppercase: true,
     lowercase: true,
     strict: true

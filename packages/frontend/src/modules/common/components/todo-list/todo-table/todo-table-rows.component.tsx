@@ -11,7 +11,7 @@ interface Props {
 export const TodoTableRows: React.FC<Props> = ({ handleOpen, rows }) => (
   <TableBody>
     {rows.map((row) => (
-      <TableRow hover key={row.title}>
+      <TableRow hover key={row.id}>
         <TableCell>{row.title}</TableCell>
         <TableCell sx={{ wordWrap: ' break-word' }}>{row.description}</TableCell>
         <TableCell align="right">
