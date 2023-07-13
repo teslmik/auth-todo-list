@@ -1,7 +1,6 @@
 import { Menu, MenuItem } from '@mui/material';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { APP_KEYS } from '../../consts';
+import { logout } from '../../../../utils';
 
 interface Props {
   anchorEl: null | HTMLElement;
@@ -15,7 +14,6 @@ interface Props {
 }
 
 export const HeaderMenu: React.FC<Props> = ({ anchorEl, setAnchorEl, setIsOpen }) => {
-  const navigate = useNavigate();
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -27,8 +25,7 @@ export const HeaderMenu: React.FC<Props> = ({ anchorEl, setAnchorEl, setIsOpen }
 
   const handleLogout = () => {
     setAnchorEl(null);
-    localStorage.removeItem(APP_KEYS.STORAGE_KEYS.TOKEN);
-    navigate(APP_KEYS.ROUTER_KEYS.AUTH);
+    logout();
   };
 
   return (
