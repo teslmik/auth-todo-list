@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 import { logout } from './logout.util';
 
 export const handleError = (err: AxiosResponse) => {
-
   if (err.status === 401) {
     logout();
   }
